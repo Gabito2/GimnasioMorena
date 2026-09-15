@@ -1,0 +1,75 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Copia de seguridad</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="document-text-outline"></ion-icon>
+        Datos guardados
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>
+        Los datos se guardan automáticamente en este dispositivo (localStorage).
+        Hacé copias periódicas para no perder la información.
+      </p>
+      <div class="resumen">
+        <ion-icon name="people-outline"></ion-icon>
+        <span><strong>{{ totalSocios() }}</strong> socios guardados</span>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="save-outline"></ion-icon>
+        Exportar
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Descargá todos los socios en un archivo JSON que podés guardar o pasar a otro dispositivo.</p>
+      <ion-button expand="block" (click)="exportar()">
+        <ion-icon slot="start" name="download-outline"></ion-icon>
+        Exportar datos (JSON)
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="cloud-upload-outline"></ion-icon>
+        Importar
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>
+        Cargá un archivo JSON exportado desde esta u otra instalación.
+        <strong>Reemplaza todos los datos actuales.</strong>
+      </p>
+
+      <ion-button expand="block" [disabled]="importando()">
+        <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
+        {{ importando() ? 'Importando…' : 'Importar archivo JSON' }}
+      </ion-button>
+      <!-- input oculto real -->
+      <input
+        #archivoInput
+        type="file"
+        accept=".json,application/json"
+        class="input-archivo"
+        (change)="importar($event)"
+      />
+
+      <ion-note color="medium">
+        <ion-icon name="warning-outline"></ion-icon>
+        Al importar, el listado actual se sobrescribe con el contenido del archivo.
+      </ion-note>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

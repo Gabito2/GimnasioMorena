@@ -1,0 +1,84 @@
+:host {
+  .hero {
+    text-align: center;
+    padding: 24px 0 8px;
+
+    .hero-icon {
+      font-size: 64px;
+      color: var(--ion-color-primary);
+    }
+
+    h1 {
+      margin: 8px 0 2px;
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: var(--ion-color-primary);
+    }
+
+    .lema {
+      margin: 0;
+      color: var(--ion-color-medium);
+      font-size: 14px;
+    }
+  }
+
+  .mensaje ion-card-content {
+    padding: 14px;
+  }
+
+  .saludo {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .resumen {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+
+    .stat {
+      flex: 1;
+      margin: 0;
+
+      ion-card-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 12px 4px;
+      }
+
+      .num {
+        font-size: 26px;
+        font-weight: 800;
+        line-height: 1.1;
+      }
+
+      .lbl {
+        font-size: 12px;
+        color: var(--ion-color-medium);
+      }
+
+      &.amarillo .num { color: var(--ion-color-warning-shade, #c58c00); }
+      &.rojo .num { color: var(--ion-color-danger); }
+    }
+  }
+
+  .acciones {
+    margin-top: 12px;
+
+    h2 {
+      font-size: 15px;
+      font-weight: 700;
+      margin: 0 0 10px;
+      color: var(--ion-color-dark);
+    }
+
+    .fila {
+      display: flex;
+      gap: 10px;
+    }
+  }
+}

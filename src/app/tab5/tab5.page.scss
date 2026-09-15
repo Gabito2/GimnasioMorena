@@ -1,0 +1,51 @@
+:host {
+  ion-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 17px;
+
+    ion-icon {
+      font-size: 20px;
+      color: var(--ion-color-primary);
+    }
+  }
+
+  .resumen {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    font-size: 15px;
+
+    ion-icon {
+      font-size: 20px;
+      color: var(--ion-color-primary);
+    }
+  }
+
+  // El input de archivo real queda invisible sobre el botón de importar.
+  ion-card-content {
+    position: relative;
+  }
+
+  .input-archivo {
+    position: absolute;
+    inset: auto 16px 16px 16px;
+    height: 44px;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  ion-note {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-size: 12px;
+
+    ion-icon {
+      flex-shrink: 0;
+    }
+  }
+}

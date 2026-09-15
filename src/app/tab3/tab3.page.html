@@ -1,0 +1,90 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Registrar alumno</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <form [formGroup]="form" (ngSubmit)="guardar()">
+    <ion-list inset>
+      <ion-item>
+        <ion-icon name="person-outline" slot="start" color="primary"></ion-icon>
+        <ion-input
+          formControlName="nombre"
+          label="Nombre *"
+          labelPlacement="floating"
+          placeholder="Juan"
+        ></ion-input>
+      </ion-item>
+      @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+        <ion-note color="danger" class="error">Ingresá el nombre (mínimo 2 letras)</ion-note>
+      }
+
+      <ion-item>
+        <ion-icon name="person-outline" slot="start" color="primary"></ion-icon>
+        <ion-input
+          formControlName="apellido"
+          label="Apellido *"
+          labelPlacement="floating"
+          placeholder="Pérez"
+        ></ion-input>
+      </ion-item>
+      @if (form.controls.apellido.touched && form.controls.apellido.invalid) {
+        <ion-note color="danger" class="error">Ingresá el apellido (mínimo 2 letras)</ion-note>
+      }
+
+      <ion-item>
+        <ion-icon name="call-outline" slot="start" color="primary"></ion-icon>
+        <ion-input
+          formControlName="telefono"
+          type="tel"
+          label="Teléfono / WhatsApp (opcional)"
+          labelPlacement="floating"
+          placeholder="351 555 1234"
+        ></ion-input>
+      </ion-item>
+      @if (form.controls.telefono.touched && form.controls.telefono.invalid) {
+        <ion-note color="danger" class="error">El teléfono tiene caracteres no válidos</ion-note>
+      }
+
+      <ion-item>
+        <ion-icon name="calendar-outline" slot="start" color="primary"></ion-icon>
+        <ion-input
+          formControlName="fechaIngreso"
+          label="Fecha de ingreso"
+          labelPlacement="floating"
+          type="date"
+          [max]="hoyISO"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-icon name="cash-outline" slot="start" color="primary"></ion-icon>
+        <ion-input
+          formControlName="montoCuota"
+          type="number"
+          inputmode="decimal"
+          min="0"
+          label="Monto de la cuota *"
+          labelPlacement="floating"
+          placeholder="15000"
+        ></ion-input>
+      </ion-item>
+      @if (form.controls.montoCuota.touched && form.controls.montoCuota.invalid) {
+        <ion-note color="danger" class="error">Ingresá un monto válido (0 o mayor)</ion-note>
+      }
+    </ion-list>
+
+    <div class="preview">
+      <ion-icon name="calendar-outline"></ion-icon>
+      <span>
+        Primera cuota vence el <strong>{{ formatearPreview(primeraVencimiento) }}</strong> (30 días después del ingreso)
+      </span>
+    </div>
+
+    <ion-button expand="block" type="submit" [disabled]="guardando()">
+      <ion-icon slot="start" name="save-outline"></ion-icon>
+      Guardar alumno
+    </ion-button>
+  </form>
+</ion-content>

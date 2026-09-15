@@ -1,0 +1,23 @@
+:host {
+  .error {
+    font-size: 12px;
+    padding-inline-start: 20px;
+  }
+
+  .preview {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 4px 16px 16px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(var(--ion-color-primary-rgb), 0.08);
+    color: var(--ion-color-primary-shade);
+    font-size: 14px;
+
+    ion-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+  }
+}

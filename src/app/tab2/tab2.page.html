@@ -1,0 +1,90 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Socios</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar
+      placeholder="Buscar por nombre o apellido"
+      [debounce]="150"
+      (ionInput)="onBusqueda($event)"
+    ></ion-searchbar>
+    <ion-segment [value]="filtro()" (ionChange)="onFiltro($event)" scrollable>
+      <ion-segment-button value="todos"><ion-label>Todos</ion-label></ion-segment-button>
+      <ion-segment-button value="al-dia"><ion-label>Al día</ion-label></ion-segment-button>
+      <ion-segment-button value="por-vencer"><ion-label>Próximos</ion-label></ion-segment-button>
+      <ion-segment-button value="vencido"><ion-label>Vencidos</ion-label></ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  @if (filtrados().length === 0) {
+    <div class="vacio">
+      <ion-icon aria-hidden="true" name="person-outline"></ion-icon>
+      <p>
+        @if (gymTotal() === 0) {
+          Todavía no hay socios registrados.<br />Usá el botón <strong>+</strong> para registrar el primero.
+        } @else {
+          No se encontraron socios con ese criterio.
+        }
+      </p>
+      @if (gymTotal() === 0) {
+        <ion-button (click)="irRegistrar()">Registrar alumno</ion-button>
+      }
+    </div>
+  } @else {
+    <ion-list inset>
+      @for (p of filtrados(); track p.id) {
+        <ion-item class="fila" [class]="'estado-' + claseEstado[p.estado]">
+          <div class="barra" slot="start"></div>
+          <ion-avatar slot="start" class="inicial">
+            <span>{{ p.nombre.charAt(0) }}{{ p.apellido.charAt(0) }}</span>
+          </ion-avatar>
+          <ion-label>
+            <h2>{{ p.nombre }} {{ p.apellido }}</h2>
+            <p>
+              Vence: {{ formatearFecha(p.fechaVencimiento) }}
+              @if (p.telefono) {
+                · <ion-icon name="call-outline"></ion-icon> {{ p.telefono }}
+              }
+            </p>
+            <ion-chip [class]="'chip-' + claseEstado[p.estado]" (click)="cambiarFiltroDesdeChip(p.estado)">
+              <ion-icon name="{{ iconoEstado[p.estado] }}"></ion-icon>
+              <ion-label>{{ p.estadoTexto }}</ion-label>
+            </ion-chip>
+          </ion-label>
+          <ion-button slot="end" fill="clear" (click)="pedirRenovar(p)" aria-label="Renovar cuota">
+            <ion-icon slot="icon-only" name="refresh-outline" color="primary"></ion-icon>
+          </ion-button>
+          <ion-button slot="end" fill="clear" (click)="pedirEliminar(p)" aria-label="Eliminar">
+            <ion-icon slot="icon-only" name="trash-outline" color="danger"></ion-icon>
+          </ion-button>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="irRegistrar()" aria-label="Registrar alumno">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  @if (alertaRenovar(); as cfg) {
+    <ion-alert
+      [header]="cfg.header"
+      [message]="cfg.message"
+      [buttons]="cfg.buttons"
+      (didDismiss)="cerrarAlerta()"
+    ></ion-alert>
+  }
+
+  @if (alertaEliminar(); as cfg) {
+    <ion-alert
+      [header]="cfg.header"
+      [message]="cfg.message"
+      [buttons]="cfg.buttons"
+      (didDismiss)="alertaEliminar.set(null)"
+    ></ion-alert>
+  }
+</ion-content>
