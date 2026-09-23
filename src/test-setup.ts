@@ -14,3 +14,14 @@ if (!window.matchMedia) {
       dispatchEvent: () => false,
     }) as MediaQueryList;
 }
+
+// jsdom no implementa el scroll horizontal de elementos y componentes como
+// ion-segment lo llaman al montar (`scrollActiveButtonIntoView`), lo que
+// producía "Uncaught Exception: scrollTo is not a function" en los tests.
+if (typeof Element !== 'undefined' && typeof Element.prototype.scrollTo !== 'function') {
+  Object.defineProperty(Element.prototype, 'scrollTo', {
+    value: () => undefined,
+    writable: true,
+    configurable: true,
+  });
+}

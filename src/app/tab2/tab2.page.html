@@ -145,22 +145,6 @@
                 </ion-item>
               </ion-list>
 
-              <!-- Pago rápido del mes corriente -->
-              <ion-list inset>
-                <ion-item>
-                  <ion-checkbox
-                    class="check-pago"
-                    [checked]="s.pagoMes"
-                    (ionChange)="togglePago(s, $event.detail.checked)"
-                  >
-                    <ion-label class="ion-text-wrap">
-                      <h2>Pagó la cuota de este mes</h2>
-                      <p>Marca, renueva su vencimiento y registra el pago</p>
-                    </ion-label>
-                  </ion-checkbox>
-                </ion-item>
-              </ion-list>
-
               <!-- Acciones -->
               <div class="acciones-detalle">
                 <ion-button expand="block" (click)="empezarEditar()">
@@ -170,20 +154,12 @@
                 @if (s.telefono) {
                   <ion-button expand="block" fill="outline" color="success" (click)="enviarRecordatorio(s)">
                     <ion-icon slot="start" name="logo-whatsapp"></ion-icon>
-                    Mandar mensaje
+                    Mandar mensaje por WhatsApp
                   </ion-button>
                 }
-                <ion-button expand="block" fill="outline" (click)="pedirRenovar(s)">
-                  <ion-icon slot="start" name="refresh-outline"></ion-icon>
-                  Cobrar y renovar cuota
-                </ion-button>
-                <ion-button expand="block" fill="outline" color="warning" (click)="pedirBaja(s)">
-                  <ion-icon slot="start" name="close-circle-outline"></ion-icon>
-                  Dar de baja
-                </ion-button>
-                <ion-button expand="block" fill="clear" color="danger" (click)="pedirEliminar(s)">
+                <ion-button expand="block" fill="outline" color="danger" (click)="pedirEliminar(s)">
                   <ion-icon slot="start" name="trash-outline"></ion-icon>
-                  Eliminar definitivamente
+                  Eliminar socio
                 </ion-button>
               </div>
             </div>
@@ -224,6 +200,26 @@
                   <ion-text slot="end" class="sufijo-monto">$/mes</ion-text>
                 </ion-input>
               </ion-item>
+              <ion-item>
+                <ion-icon name="calendar-outline" slot="start" color="primary"></ion-icon>
+                <ion-input
+                  type="date"
+                  label="Fecha de ingreso"
+                  labelPlacement="floating"
+                  [value]="fechaIngresoEdit()"
+                  (ionInput)="fechaIngresoEdit.set($event.detail.value ?? '')"
+                ></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-icon name="calendar-clear-outline" slot="start" color="primary"></ion-icon>
+                <ion-input
+                  type="date"
+                  label="Fecha de vencimiento"
+                  labelPlacement="floating"
+                  [value]="fechaVencimientoEdit()"
+                  (ionInput)="fechaVencimientoEdit.set($event.detail.value ?? '')"
+                ></ion-input>
+              </ion-item>
             </ion-list>
             @if (errorEdicion()) {
               <ion-note class="error-edicion" color="danger">{{ errorEdicion() }}</ion-note>
@@ -243,30 +239,13 @@
     </ion-modal>
   }
 
-  @if (alertaRenovar(); as cfg) {
-    <ion-alert
-      [header]="cfg.header"
-      [message]="cfg.message"
-      [buttons]="cfg.buttons"
-      (didDismiss)="cerrarAlerta()"
-    ></ion-alert>
-  }
-
   @if (alertaEliminar(); as cfg) {
     <ion-alert
+      [isOpen]="true"
       [header]="cfg.header"
       [message]="cfg.message"
       [buttons]="cfg.buttons"
       (didDismiss)="alertaEliminar.set(null)"
-    ></ion-alert>
-  }
-
-  @if (alertaPago(); as cfg) {
-    <ion-alert
-      [header]="cfg.header"
-      [message]="cfg.message"
-      [buttons]="cfg.buttons"
-      (didDismiss)="alertaPago.set(null)"
     ></ion-alert>
   }
 </ion-content>

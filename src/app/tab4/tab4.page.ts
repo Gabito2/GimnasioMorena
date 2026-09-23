@@ -86,8 +86,8 @@ export class Tab4Page {
   }
 
   formatearFecha(iso: string): string {
-    const [y, m, d] = iso.split('-');
-    return `${d}/${m}/${y}`;
+    const [y, m, d] = (iso ?? '').split('-');
+    return y && m && d ? `${d}/${m}/${y}` : '—';
   }
 
   formatearMonto(n: number): string {

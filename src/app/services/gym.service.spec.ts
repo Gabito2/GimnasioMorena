@@ -7,7 +7,7 @@ describe('GymService — pagos', () => {
   const vencFuturo = (() => {
     const d = new Date();
     d.setDate(d.getDate() + 10);
-    return d.toISOString().slice(0, 10);
+    return GymService.aISO(d);
   })();
 
   beforeEach(() => {

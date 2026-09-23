@@ -2,16 +2,16 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar, IonSegment, IonSegmentButton, IonLabel,
-  IonList, IonItem, IonChip, IonIcon, IonButton, IonAvatar, IonAlert, IonCheckbox,
+  IonList, IonItem, IonChip, IonIcon, IonButton, IonAvatar, IonAlert,
   IonFab, IonFabButton, IonModal, IonButtons, IonInput, IonNote, IonText,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
-  personOutline, callOutline, refreshOutline, trashOutline, searchOutline, alertCircleOutline,
+  personOutline, callOutline, trashOutline, searchOutline, alertCircleOutline,
   checkmarkCircleOutline, timeOutline, add, logoWhatsapp, checkmarkDoneOutline,
-  createOutline, closeCircleOutline, chatbubbleEllipsesOutline, walletOutline, personAddOutline,
+  createOutline, walletOutline, calendarOutline, calendarClearOutline, cashOutline,
 } from 'ionicons/icons';
-import { GymService, PersonaConEstado, EstadoCuota } from '../services/gym.service';
+import { GymService, Persona, PersonaConEstado, EstadoCuota } from '../services/gym.service';
 
 type Filtro = 'todos' | 'al-dia' | 'por-vencer' | 'vencido';
 
@@ -21,7 +21,7 @@ type Filtro = 'todos' | 'al-dia' | 'por-vencer' | 'vencido';
   styleUrls: ['tab2.page.scss'],
   imports: [
     IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar, IonSegment, IonSegmentButton, IonLabel,
-    IonList, IonItem, IonChip, IonIcon, IonButton, IonAvatar, IonAlert, IonCheckbox,
+    IonList, IonItem, IonChip, IonIcon, IonButton, IonAvatar, IonAlert,
     IonFab, IonFabButton, IonModal, IonButtons, IonInput, IonNote, IonText,
   ],
 })
@@ -48,9 +48,7 @@ export class Tab2Page {
       .sort((a, b) => a.diasRestantes - b.diasRestantes);
   });
 
-  readonly alertaRenovar = signal<{ header: string; message: string; buttons: any[] } | null>(null);
-  readonly alertaEliminar = signal<{ header: string; message: string; buttons: any[] } | null>(null);
-  readonly alertaPago = signal<{ header: string; message: string; buttons: any[] } | null>(null);
+  readonly alertaEliminar = signal<{ header: string; message: string; buttons: unknown[] } | null>(null);
 
   /** Socio seleccionado: abre el modal de detalle (null = cerrado). */
   readonly seleccionado = signal<PersonaConEstado | null>(null);
@@ -59,6 +57,8 @@ export class Tab2Page {
   readonly nombreEdit = signal('');
   readonly telefonoEdit = signal('');
   readonly montoEdit = signal('');
+  readonly fechaIngresoEdit = signal('');
+  readonly fechaVencimientoEdit = signal('');
   readonly errorEdicion = signal('');
 
   gymTotal(): number {
@@ -78,10 +78,10 @@ export class Tab2Page {
 
   constructor() {
     addIcons({
-      personOutline, callOutline, refreshOutline, trashOutline, searchOutline,
+      personOutline, callOutline, trashOutline, searchOutline,
       alertCircleOutline, checkmarkCircleOutline, timeOutline, add,
-      logoWhatsapp, checkmarkDoneOutline, createOutline, closeCircleOutline,
-      chatbubbleEllipsesOutline, walletOutline, personAddOutline,
+      logoWhatsapp, checkmarkDoneOutline,      createOutline, walletOutline,
+      calendarOutline, calendarClearOutline, cashOutline,
     });
   }
 
@@ -94,8 +94,8 @@ export class Tab2Page {
   }
 
   formatearFecha(iso: string): string {
-    const [y, m, d] = iso.split('-');
-    return `${d}/${m}/${y}`;
+    const [y, m, d] = (iso ?? '').split('-');
+    return y && m && d ? `${d}/${m}/${y}` : '—';
   }
 
   formatearMonto(n: number): string {
@@ -127,6 +127,8 @@ export class Tab2Page {
     this.nombreEdit.set(p.nombre);
     this.telefonoEdit.set(p.telefono);
     this.montoEdit.set(String(p.montoCuota));
+    this.fechaIngresoEdit.set(p.fechaIngreso);
+    this.fechaVencimientoEdit.set(p.fechaVencimiento);
     this.errorEdicion.set('');
     this.editando.set(true);
   }
@@ -142,6 +144,8 @@ export class Tab2Page {
     const nombre = this.nombreEdit().trim().replace(/\s+/g, ' ');
     const telefono = this.telefonoEdit().trim();
     const monto = Number(this.montoEdit());
+    const fechaIngreso = this.fechaIngresoEdit().slice(0, 10);
+    const fechaVencimiento = this.fechaVencimientoEdit().slice(0, 10);
     if (nombre.length < 2) {
       this.errorEdicion.set('El nombre debe tener al menos 2 letras');
       return;
@@ -154,51 +158,29 @@ export class Tab2Page {
       this.errorEdicion.set('Ingresá un monto válido');
       return;
     }
-    this.gym.actualizar({ ...p, nombre, telefono, montoCuota: monto });
-    this.seleccionado.set(this.gym.estadoDe({ ...p, nombre, telefono, montoCuota: monto }));
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(fechaIngreso) || isNaN(new Date(fechaIngreso).getTime())) {
+      this.errorEdicion.set('Ingresá una fecha de ingreso válida');
+      return;
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(fechaVencimiento) || isNaN(new Date(fechaVencimiento).getTime())) {
+      this.errorEdicion.set('Ingresá una fecha de vencimiento válida');
+      return;
+    }
+    // Se guarda solo la Persona: los campos derivados (estado, mesesPagados…)
+    // se recalculan y no deben persistirse en localStorage.
+    const actualizado: Persona = {
+      id: p.id,
+      nombre,
+      telefono,
+      montoCuota: monto,
+      fechaIngreso,
+      fechaVencimiento,
+      activo: p.activo,
+    };
+    this.gym.actualizar(actualizado);
+    this.seleccionado.set(this.gym.estadoDe(actualizado));
     this.editando.set(false);
     this.errorEdicion.set('');
-  }
-
-  pedirRenovar(p: PersonaConEstado): void {
-    this.alertaRenovar.set({
-      header: 'Renovar cuota',
-      message: `¿Cobrar y renovar la cuota de ${p.nombre}? La nueva fecha de vencimiento será un mes después.`,
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Cobrar y renovar',
-          role: 'confirm',
-          handler: () => {
-            this.gym.renovarCuota(p.id);
-            this.refrescarSeleccionado(p.id);
-          },
-        },
-      ],
-    });
-  }
-
-  /** Marca / desmarca el pago del mes corriente. Al marcar, ofrece avisar por WhatsApp. */
-  togglePago(p: PersonaConEstado, marcado: boolean): void {
-    if (marcado) {
-      this.gym.marcarPagado(p.id);
-      this.refrescarSeleccionado(p.id);
-      this.alertaPago.set({
-        header: 'Cuota registrada',
-        message: `Se marcó el pago de ${p.nombre} del mes y se renovó su vencimiento. ¿Querés avisarle por WhatsApp?`,
-        buttons: [
-          { text: 'No, gracias', role: 'cancel' },
-          {
-            text: 'Avisar por WhatsApp',
-            role: 'confirm',
-            handler: () => this.enviarGracias(p.id),
-          },
-        ],
-      });
-    } else {
-      this.gym.desmarcarPagado(p.id);
-      this.refrescarSeleccionado(p.id);
-    }
   }
 
   /** Abre WhatsApp con el mensaje estándar de recordatorio de cuota. */
@@ -206,34 +188,11 @@ export class Tab2Page {
     this.gym.enviarWhatsApp(p.telefono, GymService.mensajeRecordatorio(p.nombre, p.fechaVencimiento, p.montoCuota));
   }
 
-  private enviarGracias(personaId: string): void {
-    const p = this.gym.personas().find((x) => x.id === personaId);
-    if (p) this.gym.enviarWhatsApp(p.telefono, GymService.mensajeGracias(p.nombre, p.montoCuota));
-  }
-
-  pedirBaja(p: PersonaConEstado): void {
-    this.alertaEliminar.set({
-      header: 'Dar de baja',
-      message: `¿Dar de baja a ${p.nombre}? Va a quedar fuera del listado, pero se conserva su historial de pagos y podés reactivarlo desde Estadísticas.`,
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Dar de baja',
-          role: 'destructive',
-          handler: () => {
-            this.gym.darBaja(p.id);
-            this.cerrarDetalle();
-          },
-        },
-      ],
-    });
-  }
-
-  /** Elimina al socio y todo su historial (opción secundaria, con confirmación fuerte). */
+  /** Elimina al socio y todo su historial, con confirmación. */
   pedirEliminar(p: PersonaConEstado): void {
     this.alertaEliminar.set({
-      header: 'Eliminar definitivamente',
-      message: `¿ELIMINAR a ${p.nombre} y todo su historial de pagos? Esta acción no se puede deshacer. Si solo dejó el gimnasio, usá "Dar de baja".`,
+      header: 'Eliminar socio',
+      message: `¿Eliminar a ${p.nombre} y todo su historial de pagos? Esta acción no se puede deshacer.`,
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
@@ -248,14 +207,4 @@ export class Tab2Page {
     });
   }
 
-  private refrescarSeleccionado(personaId: string): void {
-    const actual = this.gym.personas().find((x) => x.id === personaId);
-    if (actual && this.seleccionado()?.id === personaId) {
-      this.seleccionado.set(this.gym.estadoDe(actual));
-    }
-  }
-
-  cerrarAlerta(): void {
-    this.alertaRenovar.set(null);
-  }
 }

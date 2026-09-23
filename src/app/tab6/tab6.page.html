@@ -1,110 +1,125 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Pagos</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="anioAnterior()" aria-label="Año anterior">
-        <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
-      </ion-button>
-      <span class="anio">{{ anio() }}</span>
-      <ion-button [disabled]="esAnioActual()" (click)="anioSiguiente()" aria-label="Año siguiente">
-        <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <!-- ================= Listado de socios ================= -->
+  <ion-searchbar
+    placeholder="Buscar socio"
+    [debounce]="150"
+    (ionInput)="onBusqueda($event)"
+  ></ion-searchbar>
+
+  @if (listaSocios().length === 0) {
+    <div class="vacio">
+      <ion-icon aria-hidden="true" name="wallet-outline"></ion-icon>
+      <p>No hay socios cargados todavía.</p>
+    </div>
+  } @else {
+    <ion-list inset>
+      @for (p of listaSocios(); track p.id) {
+        <ion-item class="fila-pago" (click)="seleccionar(p.id)" button detail>
+          <ion-icon
+            name="{{ p.pagoMesActual ? 'checkmark-circle' : 'wallet-outline' }}"
+            slot="start"
+            [color]="p.pagoMesActual ? 'success' : 'medium'"
+          ></ion-icon>
+          <ion-label>
+            <h2>{{ p.nombre }} @if (p.activo === false) { <ion-chip color="medium" class="chip-baja">De baja</ion-chip> }</h2>
+            <p>{{ textoUltimoPago(p) }}</p>
+          </ion-label>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+  <!-- ================= Modal: meses del año del socio ================= -->
   @if (socioSeleccionado(); as s) {
-    <!-- ================= Grilla de meses del socio ================= -->
-    <div class="cabecera-socio gm-animar">
-      <ion-button fill="clear" (click)="socioId.set(null)" aria-label="Volver al listado">
-        <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
-        Socios
-      </ion-button>
-      <div class="datos">
-        <h2>{{ s.nombre }}</h2>
-        <p>
-          {{ formatearResumen(s) }}
-        </p>
-      </div>
-      @if (s.activo === false) {
-        <ion-chip color="medium">De baja</ion-chip>
-      }
-    </div>
+    <ion-modal
+      [isOpen]="true"
+      (didDismiss)="cerrarSocio()"
+      [initialBreakpoint]="0.9"
+      [breakpoints]="[0, 0.9]"
+    >
+      <ng-template>
+        <ion-header>
+          <ion-toolbar>
+            <ion-buttons slot="start">
+              <ion-button (click)="cerrarSocio()" aria-label="Volver al listado">
+                <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+            <ion-title>{{ s.nombre }}</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="anioAnterior()" aria-label="Año anterior">
+                <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+              </ion-button>
+              <span class="anio">{{ anio() }}</span>
+              <ion-button [disabled]="esAnioActual()" (click)="anioSiguiente()" aria-label="Año siguiente">
+                <ion-icon slot="icon-only" name="chevron-forward-outline"></ion-icon>
+              </ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
 
-    <div class="grilla-meses">
-      @for (mes of mesesDelAnio(); track mes.clave) {
-        <button
-          type="button"
-          class="mes"
-          [class.pagado]="estaPagado(mes.clave)"
-          [class.actual]="mes.actual"
-          [class.futuro]="mes.futuro"
-          [disabled]="mes.futuro"
-          (click)="togglePago(mes, !estaPagado(mes.clave))"
-          [attr.aria-label]="'Marcar pago de ' + mes.nombre"
-        >
-          @if (estaPagado(mes.clave)) {
-            <ion-icon class="check" name="checkmark-circle"></ion-icon>
-          }
-          <span class="nombre">{{ mes.corto }}</span>
-          <span class="anio-mini">{{ anio() }}</span>
-        </button>
-      }
-    </div>
-
-    <p class="ayuda">
-      Tocá un mes para marcar el pago. Tocá de nuevo para quitarlo.
-      @if (mesesPagadosAnio().length > 0) {
-        Pagó {{ mesesPagadosAnio().length }}
-        {{ mesesPagadosAnio().length === 1 ? 'mes' : 'meses' }} en {{ anio() }}:
-        {{ nombresMesesPagados() }}.
-      }
-    </p>
-
-    <ion-card class="historial gm-animar">
-      <ion-card-content>
-        <h2>Historial completo</h2>
-        @if (s.mesesPagados.length === 0) {
-          <p>{{ s.nombre }} todavía no tiene meses pagados registrados.</p>
-        } @else {
-          <div class="lista-pagos">
-            @for (clave of s.mesesPagados; track clave) {
-              <span class="pago-pill">{{ nombreMes(clave) }} {{ clave.slice(0, 4) }}</span>
+        <ion-content>
+          <div class="cabecera-socio gm-animar">
+            <div class="datos">
+              <p>{{ formatearResumen(s) }}</p>
+            </div>
+            @if (s.activo === false) {
+              <ion-chip color="medium">De baja</ion-chip>
             }
           </div>
-        }
-      </ion-card-content>
-    </ion-card>
-  } @else {
-    <!-- ================= Selector de socio ================= -->
-    <ion-searchbar
-      placeholder="Buscar socio"
-      [debounce]="150"
-      (ionInput)="onBusqueda($event)"
-    ></ion-searchbar>
 
-    @if (listaSocios().length === 0) {
-      <div class="vacio">
-        <ion-icon aria-hidden="true" name="wallet-outline"></ion-icon>
-        <p>No hay socios cargados todavía.</p>
-      </div>
-    } @else {
-      <ion-list inset>
-        @for (p of listaSocios(); track p.id) {
-          <ion-item class="fila-pago" (click)="seleccionar(p.id)" button detail>
-            <ion-icon
-              name="{{ p.pagoMesActual ? 'checkmark-circle' : 'wallet-outline' }}"
-              slot="start"
-              [color]="p.pagoMesActual ? 'success' : 'medium'"
-            ></ion-icon>
-            <ion-label>
-              <h2>{{ p.nombre }} @if (p.activo === false) { <ion-chip color="medium" class="chip-baja">De baja</ion-chip> }</h2>
-              <p>{{ textoUltimoPago(p) }}</p>
-            </ion-label>
-          </ion-item>
-        }
-      </ion-list>
-    }
+          <div class="grilla-meses">
+            @for (mes of mesesDelAnio(); track mes.clave) {
+              <button
+                type="button"
+                class="mes"
+                [class.pagado]="estaPagado(mes.clave)"
+                [class.actual]="mes.actual"
+                [class.futuro]="mes.futuro"
+                [disabled]="mes.futuro"
+                (click)="togglePago(mes, !estaPagado(mes.clave))"
+                [attr.aria-label]="'Marcar pago de ' + mes.nombre"
+              >
+                @if (estaPagado(mes.clave)) {
+                  <ion-icon class="check" name="checkmark-circle"></ion-icon>
+                }
+                <span class="nombre">{{ mes.corto }}</span>
+                <span class="anio-mini">{{ anio() }}</span>
+              </button>
+            }
+          </div>
+
+          <p class="ayuda">
+            Tocá un mes para marcar el pago. Tocá de nuevo para quitarlo.
+            @if (mesesPagadosAnio().length > 0) {
+              Pagó {{ mesesPagadosAnio().length }}
+              {{ mesesPagadosAnio().length === 1 ? 'mes' : 'meses' }} en {{ anio() }}:
+              {{ nombresMesesPagados() }}.
+            }
+          </p>
+
+          <ion-card class="historial gm-animar">
+            <ion-card-content>
+              <h2>Historial completo</h2>
+              @if (s.mesesPagados.length === 0) {
+                <p>{{ s.nombre }} todavía no tiene meses pagados registrados.</p>
+              } @else {
+                <div class="lista-pagos">
+                  @for (clave of s.mesesPagados; track clave) {
+                    <span class="pago-pill">{{ nombreMes(clave) }} {{ clave.slice(0, 4) }}</span>
+                  }
+                </div>
+              }
+            </ion-card-content>
+          </ion-card>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
   }
 </ion-content>

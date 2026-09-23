@@ -25,7 +25,7 @@
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/* Tema oscuro permanente (negro + amarillo): se fuerza la dark palette. */
+/* Tema oscuro permanente (negro + dorado): se fuerza la dark palette. */
 @import "@ionic/angular/css/palettes/dark.class.css";
 
 /* Aplica el modo oscuro de Ionic a la app: las reglas .ion-palette-dark de la
@@ -33,7 +33,8 @@
  * La clase se declara en <html> dentro de index.html. */
 
 /* ============================================================
-   Gym Morena — Capa de diseño global
+   Gym Morena — Capa de diseño global (minimalista)
+   Superficies planas, bordes finos, un solo acento: el dorado.
    ============================================================ */
 
 /* ---------- Superficie de fondo ---------- */
@@ -47,7 +48,7 @@ ion-content {
   letter-spacing: -0.01em;
 }
 
-/* ---------- Alertas / modales (el dark class palette no los cubre del todo) ---------- */
+/* ---------- Alertas / modales ---------- */
 ion-alert,
 ion-modal,
 ion-action-sheet {
@@ -57,14 +58,14 @@ ion-action-sheet {
 
 /* ---------- Toolbar / headers ---------- */
 ion-toolbar {
-  --background: var(--gm-card-bg);
+  --background: var(--gm-bg);
   --color: var(--gm-texto);
   --border-width: 0;
   --min-height: 56px;
 
   ion-title {
-    font-size: 20px;
-    font-weight: 800;
+    font-size: 19px;
+    font-weight: 700;
     letter-spacing: -0.02em;
   }
 }
@@ -72,33 +73,34 @@ ion-toolbar {
 /* ---------- Cards ---------- */
 ion-card {
   margin-inline: 16px;
-  margin-top: 12px;
-  margin-bottom: 12px;
+  margin-top: 10px;
+  margin-bottom: 10px;
   border-radius: var(--gm-radio-lg);
   background: var(--gm-card-bg);
-  box-shadow: var(--gm-card-shadow);
+  box-shadow: none;
   border: 1px solid var(--gm-card-border);
   overflow: hidden;
 }
 
 /* ---------- Botones ---------- */
 ion-button {
-  --border-radius: 14px;
-  --box-shadow: 0 8px 20px -10px rgba(var(--ion-color-primary-rgb), 0.55);
+  --border-radius: 12px;
+  --box-shadow: none;
   font-weight: 600;
   letter-spacing: 0.01em;
   text-transform: none;
 
-  /* Botón sólido por defecto: naranja de marca */
+  /* Botón sólido: dorado plano, texto negro. Sin sombras de color. */
   &.button-solid {
     --background: var(--ion-color-primary);
-    --background-activated: var(--ion-color-primary-shade);
-    --background-hover: var(--ion-color-primary-shade);
-    --color: #fff;
+    --background-activated: var(--ion-color-secondary);
+    --background-hover: var(--ion-color-secondary);
+    --color: #0a0a0b;
+    --color-activated: #0a0a0b;
   }
 
   &.button-outline {
-    --border-width: 1.5px;
+    --border-width: 1px;
     --box-shadow: none;
   }
 
@@ -109,21 +111,21 @@ ion-button {
 
 /* ---------- FAB ---------- */
 ion-fab-button {
-  --box-shadow: 0 10px 26px -10px rgba(var(--ion-color-primary-rgb), 0.65);
-  --border-radius: 18px;
+  --box-shadow: none;
+  --border-radius: 14px;
 }
 
 /* ---------- Segments (filtros) ---------- */
 ion-segment {
-  --background: var(--gm-card-bg);
+  --background: transparent;
 }
 
 /* ---------- Searchbar ---------- */
 ion-searchbar {
   --background: var(--gm-card-bg);
   --color: var(--gm-texto);
-  --border-radius: 14px;
-  --box-shadow: var(--gm-card-shadow);
+  --border-radius: 12px;
+  --box-shadow: none;
   --placeholder-color: var(--gm-texto-suave);
   --icon-color: var(--gm-texto-suave);
   --clear-button-color: var(--gm-texto-suave);
@@ -136,9 +138,7 @@ ion-item {
   --background: var(--gm-card-bg);
 }
 
-/* ---------- Inputs ----------
- * --color es el texto tecleado, explícito para que siempre contraste con la
- * superficie clara. */
+/* ---------- Inputs ---------- */
 ion-input {
   --color: var(--gm-texto);
   --placeholder-color: var(--gm-texto-suave);
@@ -148,22 +148,36 @@ ion-textarea {
   --color: var(--gm-texto);
 }
 
-ion-alert,
-ion-modal {
-  --color: var(--gm-texto);
-}
-
 ion-list[inset] {
   margin-top: 8px;
   border-radius: var(--gm-radio-lg);
   background: transparent;
 }
 
+/* ---------- Tab bar (footer) ---------- */
+ion-tab-bar {
+  border-top: 1px solid var(--gm-card-border);
+  height: 62px;
+
+  ion-tab-button {
+    --color: var(--gm-texto-suave);
+    --color-selected: var(--ion-color-primary);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: none;
+
+    ion-icon {
+      font-size: 21px;
+      margin-bottom: 2px;
+    }
+  }
+}
+
 /* ---------- Animaciones de entrada ---------- */
 @keyframes gm-entrar {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -172,7 +186,7 @@ ion-list[inset] {
 }
 
 .gm-animar {
-  animation: gm-entrar 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation: gm-entrar 0.35s cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 
 /* Escalonado suave para listas */

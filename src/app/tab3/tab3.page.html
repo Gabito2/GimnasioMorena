@@ -17,6 +17,9 @@
       </div>
     </div>
 
+    <!-- ---------- Datos del alumno ---------- -->
+    <span class="titulo-seccion gm-animar">Datos del alumno</span>
+    <br>
     <ion-list inset class="gm-animar">
       <ion-item>
         <ion-icon name="person-outline" slot="start" color="primary"></ion-icon>
@@ -36,7 +39,7 @@
         <ion-input
           formControlName="telefono"
           type="tel"
-          label="Teléfono / WhatsApp (opcional)"
+          label="WhatsApp"
           labelPlacement="floating"
           placeholder="351 555 1234"
         ></ion-input>
@@ -56,7 +59,12 @@
           (ionChange)="onFechaIngresoChange($event)"
         ></ion-input>
       </ion-item>
+    </ion-list>
 
+    <!-- ---------- Cuota ---------- -->
+    <span class="titulo-seccion gm-animar">Cuota mensual</span>
+    <br>
+    <ion-list inset class="gm-animar">
       <ion-item>
         <ion-icon name="cash-outline" slot="start" color="primary"></ion-icon>
         <ion-input
@@ -95,10 +103,14 @@
 
     <!-- Preview del vencimiento -->
     <div class="preview gm-animar">
-      <ion-icon name="calendar-outline"></ion-icon>
-      <span>
-        Primera cuota vence el <strong>{{ formatearPreview(primeraVencimiento) }}</strong> (30 días después del ingreso)
-      </span>
+      <div class="preview-icono">
+        <ion-icon name="calendar-outline"></ion-icon>
+      </div>
+      <div class="preview-texto">
+        <span class="preview-label">Primer vencimiento</span>
+        <span class="preview-fecha">{{ formatearPreview(primeraVencimiento) }}</span>
+        <span class="preview-nota">30 días después del ingreso</span>
+      </div>
     </div>
 
     <!-- Acciones -->

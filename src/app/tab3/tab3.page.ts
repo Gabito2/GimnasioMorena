@@ -31,7 +31,7 @@ export class Tab3Page {
   readonly hoyISO = GymService.hoyISO();
 
   /** Montos frecuentes para carga con un toque. */
-  readonly montosRapidos = [15000, 20000, 25000, 30000] as const;
+  readonly montosRapidos = [20000, 23000, 25000, 30000] as const;
   readonly montoSeleccionado = signal<number | null>(null);
 
   /** Primera vencimiento estimado: ingreso + 30 días. */
@@ -39,14 +39,14 @@ export class Tab3Page {
     const base = this.form.controls.fechaIngreso.value || this.fechaIngresoISO;
     const d = new Date(base + 'T00:00:00');
     d.setDate(d.getDate() + 30);
-    return d.toISOString().slice(0, 10);
+    return GymService.aISO(d);
   }
 
   readonly form = this.fb.group({
     nombre: ['', [Validators.required, Validators.minLength(2)]],
     telefono: ['', [Validators.pattern(/^[0-9+\-\s()]{6,20}$/)]],
     fechaIngreso: [GymService.hoyISO(), Validators.required],
-    montoCuota: [0, [Validators.required, Validators.min(0)]],
+    montoCuota: [23000, [Validators.required, Validators.min(0)]],
   });
 
   constructor() {
@@ -84,17 +84,18 @@ export class Tab3Page {
     const fechaIngreso = v.fechaIngreso.slice(0, 10);
     const venc = new Date(fechaIngreso + 'T00:00:00');
     venc.setDate(venc.getDate() + 30);
+    const fechaVencimiento = GymService.aISO(venc);
 
     this.gym.agregar({
       nombre: v.nombre.trim().replace(/\s+/g, ' '),
       telefono: v.telefono.trim(),
       fechaIngreso,
       montoCuota: Number(v.montoCuota) || 0,
-      fechaVencimiento: venc.toISOString().slice(0, 10),
+      fechaVencimiento,
     });
 
     const toast = await this.toastCtrl.create({
-      message: `${v.nombre.trim()} registrado. Cuota vence el ${this.formatear(venc.toISOString().slice(0, 10))}`,
+      message: `${v.nombre.trim()} registrado. Cuota vence el ${this.formatear(fechaVencimiento)}`,
       duration: 2600,
       color: 'success',
       position: 'top',

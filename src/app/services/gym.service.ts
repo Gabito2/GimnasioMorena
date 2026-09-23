@@ -121,8 +121,20 @@ export class GymService {
   }
 
   // ---------- Utilidades de fechas ----------
+  /**
+   * Convierte una Date a ISO yyyy-MM-dd usando la fecha LOCAL.
+   * (toISOString() usa UTC y en horarios como 00:00–03:00 en Argentina
+   * devolvía el día anterior).
+   */
+  static aISO(d: Date): string {
+    const anio = d.getFullYear();
+    const mes = String(d.getMonth() + 1).padStart(2, '0');
+    const dia = String(d.getDate()).padStart(2, '0');
+    return `${anio}-${mes}-${dia}`;
+  }
+
   static hoyISO(): string {
-    return new Date().toISOString().slice(0, 10);
+    return GymService.aISO(new Date());
   }
 
   /** Diferencia en días entre hoy y la fecha (positivo = faltan días, negativo = venció hace X días). */
@@ -141,7 +153,7 @@ export class GymService {
     if (d.getDate() !== diaOriginal) {
       d.setDate(0); // vuelve al último día del mes anterior
     }
-    return d.toISOString().slice(0, 10);
+    return GymService.aISO(d);
   }
 
   estadoDe(p: Persona): PersonaConEstado {
@@ -397,9 +409,14 @@ export class GymService {
   }
 
   private normalizarFecha(valor: unknown): string {
+    // ISO con fecha explícita: se toma tal cual (evita el corrimiento por UTC).
+    if (typeof valor === 'string') {
+      const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(valor.trim());
+      if (m) return `${m[1]}-${m[2]}-${m[3]}`;
+    }
     if (typeof valor !== 'string' && !(valor instanceof Date)) return '';
     const d = new Date(valor);
-    return isNaN(d.getTime()) ? '' : d.toISOString().slice(0, 10);
+    return isNaN(d.getTime()) ? '' : GymService.aISO(d);
   }
 
   // ---------- WhatsApp ----------

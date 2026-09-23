@@ -53,11 +53,11 @@
         <strong>Reemplaza todos los datos actuales.</strong>
       </p>
 
-      <ion-button expand="block" [disabled]="importando()">
+      <ion-button expand="block" [disabled]="importando()" (click)="archivoInput.click()">
         <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
         {{ importando() ? 'Importando…' : 'Importar archivo JSON' }}
       </ion-button>
-      <!-- input oculto real -->
+      <!-- input real de archivo: lo dispara el botón de arriba -->
       <input
         #archivoInput
         type="file"

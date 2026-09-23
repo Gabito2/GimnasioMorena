@@ -1,190 +1,166 @@
-:host {
-  ion-searchbar {
-    padding-bottom: 0;
+/* Nota: sin envoltorio `:host` a propósito: el contenido de ion-modal se
+   portaliza fuera del componente, y Angular scopea estas reglas por atributo
+   (_ngcontent), por lo que siguen siendo propias de esta página. */
+
+ion-searchbar {
+  padding-bottom: 0;
+}
+
+ion-segment {
+  margin: 0 auto 8px;
+  max-width: 640px;
+  border-radius: 12px;
+}
+
+ion-segment-button {
+  --indicator-color: var(--gm-acento-suave);
+  --color: var(--gm-texto-suave);
+  --color-checked: var(--ion-color-primary);
+  --border-radius: 10px;
+  min-height: 34px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 64px 24px;
+  color: var(--gm-texto-suave);
+
+  ion-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.5;
   }
+}
 
-  ion-segment {
-    margin: 0 auto 8px;
-    max-width: 640px;
-    border-radius: 14px;
-  }
+/* ---------- Filas de socios ---------- */
+ion-item.fila {
+  --background: var(--gm-card-bg);
+  --padding-start: 12px;
+  --padding-end: 8px;
+  --min-height: 72px;
+  --inner-padding-end: 4px;
+  border-radius: var(--gm-radio-lg);
+  margin: 8px 16px;
+  border: 1px solid var(--gm-card-border);
 
-  ion-segment-button {
-    --indicator-color: rgba(var(--ion-color-primary-rgb), 0.12);
-    --color: var(--gm-texto-suave);
-    --color-checked: var(--ion-color-primary);
-    --border-radius: 12px;
-    min-height: 34px;
-    font-size: 13px;
-    font-weight: 600;
-    text-transform: none;
-    letter-spacing: 0;
-  }
-
-  .vacio {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 64px 24px;
-    color: var(--gm-texto-suave);
-
-    ion-icon {
-      font-size: 56px;
-      margin-bottom: 12px;
-      opacity: 0.6;
-    }
-  }
-
-  /* ---------- Filas de socios ---------- */
-  ion-item.fila {
-    --background: var(--gm-card-bg);
-    --padding-start: 12px;
-    --padding-end: 8px;
-    --min-height: 72px;
-    --inner-padding-end: 4px;
-    border-radius: 16px;
-    margin: 8px 16px;
-    box-shadow: var(--gm-card-shadow);
-    border: 1px solid var(--gm-card-border);
-    transition: transform 0.15s ease;
-
-    &:active {
-      transform: scale(0.985);
-    }
-
-    .barra {
-      width: 4px;
-      height: 44px;
-      border-radius: 4px;
-      margin-right: 10px;
-      flex-shrink: 0;
-    }
-
-    &.estado-verde .barra { background: var(--ion-color-success); }
-    &.estado-amarillo .barra { background: var(--ion-color-warning); }
-    &.estado-rojo .barra { background: var(--ion-color-danger); }
-  }
-
-  .inicial {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
+  .barra {
+    width: 3px;
     height: 44px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-secondary));
-    color: #0a0a0b;
-    font-weight: 700;
-    box-shadow: 0 6px 14px -8px rgba(var(--ion-color-primary-rgb), 0.35);
-
-    span {
-      font-size: 15px;
-      letter-spacing: 0.02em;
-    }
+    border-radius: 2px;
+    margin-right: 10px;
+    flex-shrink: 0;
   }
 
-  ion-label {
-    h2 {
-      font-weight: 700;
-      font-size: 15.5px;
-      color: var(--gm-texto);
-    }
+  &.estado-verde .barra { background: var(--ion-color-success); }
+  &.estado-amarillo .barra { background: var(--ion-color-warning); }
+  &.estado-rojo .barra { background: var(--ion-color-danger); }
+}
 
-    p {
-      color: var(--gm-texto-suave);
-      font-size: 12.5px;
-    }
+.inicial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--gm-acento-suave);
+  border: 1px solid var(--gm-acento-borde);
+  color: var(--ion-color-primary);
+  font-weight: 700;
+
+  span {
+    font-size: 15px;
+    letter-spacing: 0.02em;
   }
+}
 
-  ion-chip {
-    margin: 6px 0 0;
-    height: 24px;
+ion-label {
+  h2 {
     font-weight: 600;
-
-    &.chip-verde {
-      background: rgba(var(--ion-color-success-rgb), 0.14);
-      color: var(--ion-color-success-shade);
-    }
-    &.chip-amarillo {
-      background: rgba(var(--ion-color-warning-rgb), 0.18);
-      color: var(--ion-color-warning-shade);
-    }
-    &.chip-rojo {
-      background: rgba(var(--ion-color-danger-rgb), 0.14);
-      color: var(--ion-color-danger-shade);
-    }
-
-    ion-icon {
-      font-size: 14px;
-    }
+    font-size: 15.5px;
+    color: var(--gm-texto);
   }
 
-  ion-label p ion-icon {
-    vertical-align: -2px;
-  }
-
-  /* ---------- Acciones de fila (pago / WhatsApp / historial) ---------- */
-  .acciones {
-    display: flex;
-    align-items: center;
-    gap: 0;
-  }
-
-  .acciones ion-button {
-    --padding-start: 6px;
-    --padding-end: 6px;
-    margin: 0;
-  }
-
-  /* Check de pago del mes */
-  .check-pago {
-    margin-inline-end: 2px;
-    --checkbox-background-checked: var(--ion-color-success);
-    --border-color-checked: var(--ion-color-success);
-  }
-
-  /* Check verde junto al nombre si pagó el mes */
-  .pagado-check {
-    color: var(--ion-color-success);
-    font-size: 16px;
-    vertical-align: -3px;
-    margin-left: 4px;
-  }
-
-  /* ---------- Modal de detalle del socio ---------- */
-  .ficha {
-    padding-bottom: 24px;
-  }
-
-  .inicial.grande {
-    width: 56px;
-    height: 56px;
-    border-radius: 18px;
-
-    span {
-      font-size: 19px;
-    }
-  }
-
-  .sufijo-monto {
-    font-size: 13px;
-    font-weight: 600;
+  p {
     color: var(--gm-texto-suave);
-    margin-left: 8px;
-  }
-
-  .error-edicion {
-    display: block;
     font-size: 12.5px;
-    font-weight: 500;
-    margin: 0 16px 8px;
+  }
+}
+
+ion-chip {
+  margin: 6px 0 0;
+  height: 24px;
+  font-weight: 600;
+
+  &.chip-verde {
+    background: rgba(var(--ion-color-success-rgb), 0.12);
+    color: var(--ion-color-success);
+  }
+  &.chip-amarillo {
+    background: rgba(var(--ion-color-warning-rgb), 0.14);
+    color: var(--ion-color-warning);
+  }
+  &.chip-rojo {
+    background: rgba(var(--ion-color-danger-rgb), 0.12);
+    color: var(--ion-color-danger);
   }
 
-  .acciones-detalle {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 4px 16px 16px;
+  ion-icon {
+    font-size: 14px;
   }
+}
+
+ion-label p ion-icon {
+  vertical-align: -2px;
+}
+
+/* Check verde junto al nombre si pagó el mes */
+.pagado-check {
+  color: var(--ion-color-success);
+  font-size: 16px;
+  vertical-align: -3px;
+  margin-left: 4px;
+}
+
+/* ---------- Modal de detalle del socio ---------- */
+.ficha {
+  padding-bottom: 24px;
+}
+
+.inicial.grande {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+
+  span {
+    font-size: 19px;
+  }
+}
+
+.sufijo-monto {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gm-texto-suave);
+  margin-left: 8px;
+}
+
+.error-edicion {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 500;
+  margin: 0 16px 8px;
+}
+
+.acciones-detalle {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 16px 16px;
 }

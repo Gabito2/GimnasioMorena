@@ -2,33 +2,34 @@
 // https://ionicframework.com/docs/theming/
 
 /**
- * Gym Morena — Tema institucional OSCURO
- * Negro + amarillo. Sin modo claro: la app siempre se ve oscura.
+ * Gym Morena — Tema institucional OSCURO · MINIMALISTA
+ * Superficies planas casi negras + acento dorado. Sin gradientes ni brillos:
+ * la jerarquía la construyen el contraste, el espacio y el borde fino.
  */
 :root {
-  /* ---------- Color: institucional ---------- */
-  --ion-color-primary: #ffd400;
-  --ion-color-primary-rgb: 255, 212, 0;
+  /* ---------- Color: institucional (dorado) ---------- */
+  --ion-color-primary: #eab308;
+  --ion-color-primary-rgb: 234, 179, 8;
   --ion-color-primary-contrast: #000000;
   --ion-color-primary-contrast-rgb: 0, 0, 0;
-  --ion-color-primary-shade: #e0bb00;
-  --ion-color-primary-tint: #ffda26;
+  --ion-color-primary-shade: #ce9e07;
+  --ion-color-primary-tint: #ecbc21;
 
-  --ion-color-secondary: #ffb800;
-  --ion-color-secondary-rgb: 255, 184, 0;
+  --ion-color-secondary: #ca8a04;
+  --ion-color-secondary-rgb: 202, 138, 4;
   --ion-color-secondary-contrast: #000000;
   --ion-color-secondary-contrast-rgb: 0, 0, 0;
-  --ion-color-secondary-shade: #e0a200;
-  --ion-color-secondary-tint: #ffbf1a;
+  --ion-color-secondary-shade: #b27904;
+  --ion-color-secondary-tint: #cf961c;
 
-  --ion-color-tertiary: #ffe066;
-  --ion-color-tertiary-rgb: 255, 224, 102;
+  --ion-color-tertiary: #fde68a;
+  --ion-color-tertiary-rgb: 253, 230, 138;
   --ion-color-tertiary-contrast: #000000;
   --ion-color-tertiary-contrast-rgb: 0, 0, 0;
-  --ion-color-tertiary-shade: #e0c55a;
-  --ion-color-tertiary-tint: #ffe475;
+  --ion-color-tertiary-shade: #dfca79;
+  --ion-color-tertiary-tint: #fde996;
 
-  /* ---------- Color: estado ---------- */
+  /* ---------- Color: estado (funcionales, saturación contenida) ---------- */
   --ion-color-success: #4ade80;
   --ion-color-success-rgb: 74, 222, 128;
   --ion-color-success-contrast: #000000;
@@ -50,19 +51,19 @@
   --ion-color-danger-shade: #da6363;
   --ion-color-danger-tint: #f97f7f;
 
-  --ion-color-medium: #9ca3af;
-  --ion-color-medium-rgb: 156, 163, 175;
+  --ion-color-medium: #8b8d98;
+  --ion-color-medium-rgb: 139, 141, 152;
   --ion-color-medium-contrast: #000000;
   --ion-color-medium-contrast-rgb: 0, 0, 0;
-  --ion-color-medium-shade: #898f9b;
-  --ion-color-medium-tint: #a6acb7;
+  --ion-color-medium-shade: #7a7c86;
+  --ion-color-medium-tint: #9798a3;
 
-  --ion-color-light: #343434;
-  --ion-color-light-rgb: 52, 52, 52;
+  --ion-color-light: #2a2a2e;
+  --ion-color-light-rgb: 42, 42, 46;
   --ion-color-light-contrast: #ffffff;
   --ion-color-light-contrast-rgb: 255, 255, 255;
-  --ion-color-light-shade: #2e2e2e;
-  --ion-color-light-tint: #484848;
+  --ion-color-light-shade: #252529;
+  --ion-color-light-tint: #3f3f43;
 
   --ion-color-dark: #f4f4f5;
   --ion-color-dark-rgb: 244, 244, 245;
@@ -92,17 +93,17 @@
   --ion-background-color-step-900: #e6e6e6;
   --ion-background-color-step-950: #f2f2f2;
 
-  /* ---------- Superficies (siempre oscuras) ---------- */
+  /* ---------- Superficies (siempre oscuras, planas) ---------- */
   --ion-text-color: #f4f4f5;
   --ion-text-color-rgb: 244, 244, 245;
   --ion-background-color: #0a0a0b;
   --ion-background-color-rgb: 10, 10, 11;
-  --ion-card-background: #161618;
-  --ion-item-background: #161618;
-  --ion-toolbar-background: #161618;
-  --ion-tab-bar-background: #161618;
-  --ion-overlay-background-color: #1c1c1e;
-  --ion-border-color: rgba(244, 244, 245, 0.1);
+  --ion-card-background: #141416;
+  --ion-item-background: #141416;
+  --ion-toolbar-background: #0a0a0b;
+  --ion-tab-bar-background: #0c0c0e;
+  --ion-overlay-background-color: #141416;
+  --ion-border-color: rgba(244, 244, 245, 0.08);
 
   /* ---------- Tipografía ---------- */
   --ion-font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -110,20 +111,20 @@
   /* ---------- Tokens de diseño ---------- */
   /* Superficies */
   --gm-bg: #0a0a0b;
-  --gm-card-bg: #161618;
+  --gm-card-bg: #141416;
   --gm-card-border: rgba(244, 244, 245, 0.08);
-  --gm-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+  --gm-tab-bg: #0c0c0e;
 
-  /* Gradiente de marca amarillo (hero / banners) */
-  --gm-gradiente: linear-gradient(135deg, #ffd400 0%, #ffb800 100%);
-  --gm-gradiente-suave: linear-gradient(135deg, rgba(255, 212, 0, 0.12) 0%, rgba(255, 184, 0, 0.05) 100%);
+  /* Acento dorado plano (tinte + borde para estados activos) */
+  --gm-acento-suave: rgba(234, 179, 8, 0.09);
+  --gm-acento-borde: rgba(234, 179, 8, 0.32);
 
   /* Radios */
-  --gm-radio: 16px;
-  --gm-radio-lg: 22px;
+  --gm-radio: 12px;
+  --gm-radio-lg: 16px;
 
   /* Texto */
   --gm-texto: #f4f4f5;
-  --gm-texto-suave: #9ca3af;
+  --gm-texto-suave: #8b8d98;
   --gm-texto-invertido: #0a0a0b;
 }
