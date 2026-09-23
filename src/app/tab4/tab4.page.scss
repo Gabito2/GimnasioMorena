@@ -1,74 +1,145 @@
 :host {
+  /* ---------- Grilla de métricas ---------- */
   .grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
-    padding: 12px 12px 0;
+    padding: 12px 16px 0;
 
-    .metrica ion-card-content {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      padding: 14px;
-    }
+    .metrica {
+      margin: 0;
+      position: relative;
+      overflow: hidden;
 
-    ion-icon {
-      font-size: 22px;
-      color: var(--ion-color-primary);
-    }
+      /* banda de acento superior */
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--ion-color-primary);
+        opacity: 0.85;
+      }
 
-    .num {
-      font-size: 24px;
-      font-weight: 800;
-      line-height: 1.15;
-    }
+      &.verde::before { background: var(--ion-color-success); }
+      &.amarillo::before { background: var(--ion-color-warning); }
+      &.rojo::before { background: var(--ion-color-danger); }
 
-    .lbl {
-      font-size: 12px;
-      color: var(--ion-color-medium);
+      ion-card-content {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding: 16px 14px 12px;
+      }
+
+      ion-icon {
+        font-size: 22px;
+        color: var(--ion-color-primary);
+        margin-bottom: 4px;
+      }
+
+      .num {
+        font-size: 26px;
+        font-weight: 800;
+        line-height: 1.15;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .lbl {
+        font-size: 12px;
+        color: var(--gm-texto-suave);
+      }
     }
 
     .verde ion-icon, .verde .num { color: var(--ion-color-success); }
-    .amarillo ion-icon, .amarillo .num { color: var(--ion-color-warning-shade, #c58c00); }
+    .amarillo ion-icon, .amarillo .num { color: var(--ion-color-warning-shade); }
     .rojo ion-icon, .rojo .num { color: var(--ion-color-danger); }
 
     .ingreso {
       grid-column: 1 / -1;
 
-      .num { color: var(--ion-color-success); }
+      &::before {
+        background: linear-gradient(90deg, var(--ion-color-success), var(--ion-color-primary));
+      }
+
+      ion-icon, .num { color: var(--ion-color-success); }
+      ion-icon { color: var(--ion-color-success); }
     }
   }
 
+  /* ---------- Progreso ---------- */
   .progreso {
-    padding: 4px 16px;
+    padding: 8px 16px 4px;
 
     .barra {
-      height: 10px;
-      border-radius: 6px;
-      background: rgba(var(--ion-color-dark-rgb), 0.1);
+      height: 12px;
+      border-radius: 8px;
+      background: rgba(var(--ion-color-primary-rgb), 0.1);
       overflow: hidden;
     }
 
     .relleno {
       height: 100%;
-      border-radius: 6px;
-      background: var(--ion-color-success);
-      transition: width 0.4s ease;
+      border-radius: 8px;
+      background: linear-gradient(90deg, var(--ion-color-success), #86efac);
+      transition: width 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
     }
 
     span {
       display: block;
-      margin-top: 6px;
-      font-size: 12px;
-      color: var(--ion-color-medium);
+      margin-top: 8px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--gm-texto-suave);
       text-align: center;
     }
   }
 
+  /* ---------- Secciones de listado ---------- */
   .titulo {
-    margin: 16px 16px 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 16px 4px;
     font-size: 15px;
     font-weight: 700;
+    color: var(--gm-texto);
+
+    &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--gm-card-border);
+    }
+  }
+
+  ion-list[inset] ion-item {
+    --padding-start: 14px;
+    --min-height: 52px;
+  }
+
+  /* ---------- Socios de baja ---------- */
+  ion-item.item-baja {
+    --background: var(--gm-card-bg);
+    opacity: 0.75;
+
+    h2 {
+      font-weight: 600;
+      color: var(--gm-texto);
+    }
+
+    p {
+      font-size: 12px;
+      color: var(--gm-texto-suave);
+    }
+
+    ion-button {
+      --border-radius: 10px;
+      font-size: 12.5px;
+      text-transform: none;
+    }
   }
 
   .vacio {
@@ -76,9 +147,13 @@
     flex-direction: column;
     align-items: center;
     padding: 64px 24px;
-    color: var(--ion-color-medium);
+    color: var(--gm-texto-suave);
     text-align: center;
 
-    ion-icon { font-size: 56px; margin-bottom: 10px; }
+    ion-icon {
+      font-size: 56px;
+      margin-bottom: 10px;
+      opacity: 0.6;
+    }
   }
 }

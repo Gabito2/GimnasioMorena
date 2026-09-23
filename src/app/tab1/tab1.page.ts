@@ -15,7 +15,7 @@ import { GymService } from '../services/gym.service';
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
   imports: [
-    IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonIcon,
+    IonHeader, IonContent, IonButton, IonIcon,
     IonCard, IonCardContent,
   ],
 })
@@ -37,18 +37,21 @@ export class Tab1Page {
   }
 
   get vencidos(): number {
-    return this.gym.personas().filter((p) => GymService.diasRestantes(p.fechaVencimiento) < 0).length;
+    return this.gym
+      .personas()
+      .filter((p) => p.activo !== false && GymService.diasRestantes(p.fechaVencimiento) < 0).length;
   }
 
   get porVencer(): number {
     return this.gym.personas().filter((p) => {
+      if (p.activo === false) return false;
       const d = GymService.diasRestantes(p.fechaVencimiento);
       return d >= 0 && d <= 5;
     }).length;
   }
 
   get total(): number {
-    return this.gym.personas().length;
+    return this.gym.personas().filter((p) => p.activo !== false).length;
   }
 
   irRegistrar(): void {

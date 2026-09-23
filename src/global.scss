@@ -25,13 +25,165 @@
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
+/* Tema oscuro permanente (negro + amarillo): se fuerza la dark palette. */
+@import "@ionic/angular/css/palettes/dark.class.css";
 
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+/* Aplica el modo oscuro de Ionic a la app: las reglas .ion-palette-dark de la
+ * paleta cubren los componentes Ionic; el resto del tema vive en variables.scss.
+ * La clase se declara en <html> dentro de index.html. */
+
+/* ============================================================
+   Gym Morena — Capa de diseño global
+   ============================================================ */
+
+/* ---------- Superficie de fondo ---------- */
+ion-content {
+  --background: var(--gm-bg);
+}
+
+/* ---------- Tipografía base ---------- */
+ion-content {
+  font-family: var(--ion-font-family);
+  letter-spacing: -0.01em;
+}
+
+/* ---------- Alertas / modales (el dark class palette no los cubre del todo) ---------- */
+ion-alert,
+ion-modal,
+ion-action-sheet {
+  --background: var(--ion-overlay-background-color);
+  --color: var(--gm-texto);
+}
+
+/* ---------- Toolbar / headers ---------- */
+ion-toolbar {
+  --background: var(--gm-card-bg);
+  --color: var(--gm-texto);
+  --border-width: 0;
+  --min-height: 56px;
+
+  ion-title {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+}
+
+/* ---------- Cards ---------- */
+ion-card {
+  margin-inline: 16px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  border-radius: var(--gm-radio-lg);
+  background: var(--gm-card-bg);
+  box-shadow: var(--gm-card-shadow);
+  border: 1px solid var(--gm-card-border);
+  overflow: hidden;
+}
+
+/* ---------- Botones ---------- */
+ion-button {
+  --border-radius: 14px;
+  --box-shadow: 0 8px 20px -10px rgba(var(--ion-color-primary-rgb), 0.55);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: none;
+
+  /* Botón sólido por defecto: naranja de marca */
+  &.button-solid {
+    --background: var(--ion-color-primary);
+    --background-activated: var(--ion-color-primary-shade);
+    --background-hover: var(--ion-color-primary-shade);
+    --color: #fff;
+  }
+
+  &.button-outline {
+    --border-width: 1.5px;
+    --box-shadow: none;
+  }
+
+  &.button-round {
+    --border-radius: 999px;
+  }
+}
+
+/* ---------- FAB ---------- */
+ion-fab-button {
+  --box-shadow: 0 10px 26px -10px rgba(var(--ion-color-primary-rgb), 0.65);
+  --border-radius: 18px;
+}
+
+/* ---------- Segments (filtros) ---------- */
+ion-segment {
+  --background: var(--gm-card-bg);
+}
+
+/* ---------- Searchbar ---------- */
+ion-searchbar {
+  --background: var(--gm-card-bg);
+  --color: var(--gm-texto);
+  --border-radius: 14px;
+  --box-shadow: var(--gm-card-shadow);
+  --placeholder-color: var(--gm-texto-suave);
+  --icon-color: var(--gm-texto-suave);
+  --clear-button-color: var(--gm-texto-suave);
+  padding-top: 8px;
+  padding-bottom: 4px;
+}
+
+/* ---------- Items de lista ---------- */
+ion-item {
+  --background: var(--gm-card-bg);
+}
+
+/* ---------- Inputs ----------
+ * --color es el texto tecleado, explícito para que siempre contraste con la
+ * superficie clara. */
+ion-input {
+  --color: var(--gm-texto);
+  --placeholder-color: var(--gm-texto-suave);
+}
+
+ion-textarea {
+  --color: var(--gm-texto);
+}
+
+ion-alert,
+ion-modal {
+  --color: var(--gm-texto);
+}
+
+ion-list[inset] {
+  margin-top: 8px;
+  border-radius: var(--gm-radio-lg);
+  background: transparent;
+}
+
+/* ---------- Animaciones de entrada ---------- */
+@keyframes gm-entrar {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.gm-animar {
+  animation: gm-entrar 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+/* Escalonado suave para listas */
+.gm-animar:nth-child(1) { animation-delay: 0.02s; }
+.gm-animar:nth-child(2) { animation-delay: 0.05s; }
+.gm-animar:nth-child(3) { animation-delay: 0.08s; }
+.gm-animar:nth-child(4) { animation-delay: 0.11s; }
+.gm-animar:nth-child(5) { animation-delay: 0.14s; }
+.gm-animar:nth-child(6) { animation-delay: 0.17s; }
+
+/* ---------- Scrollbar discreta (web) ---------- */
+ion-content::-webkit-scrollbar {
+  width: 0;
+}

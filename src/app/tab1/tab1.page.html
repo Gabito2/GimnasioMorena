@@ -1,36 +1,41 @@
 <ion-header [translucent]="true">
-  <ion-toolbar color="primary">
+  <!-- <ion-toolbar color="primary">
     <ion-title>Gym Morena</ion-title>
-  </ion-toolbar>
+  </ion-toolbar> -->
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding">
+<ion-content [fullscreen]="true">
+  <!-- Hero -->
   <div class="hero">
-    <ion-icon aria-hidden="true" name="barbell-outline" class="hero-icon"></ion-icon>
-    <h1>Gym Morena</h1>
+    <div class="hero-icono">
+      <ion-icon aria-hidden="true" name="barbell-outline"></ion-icon>
+    </div>
+    <h1>Gym <span class="acento">Morena</span></h1>
     <p class="lema">Entrená fuerte · Cobrá a tiempo</p>
   </div>
 
-  <ion-card class="mensaje">
+  <!-- Mensaje del día -->
+  <ion-card class="mensaje gm-animar">
     <ion-card-content>
       <p class="saludo">{{ mensajeDelDia }}</p>
     </ion-card-content>
   </ion-card>
 
+  <!-- Resumen de socios -->
   <div class="resumen">
-    <ion-card class="stat">
+    <ion-card class="stat gm-animar">
       <ion-card-content>
         <span class="num">{{ total }}</span>
         <span class="lbl">Socios</span>
       </ion-card-content>
     </ion-card>
-    <ion-card class="stat amarillo">
+    <ion-card class="stat amarillo gm-animar">
       <ion-card-content>
         <span class="num">{{ porVencer }}</span>
         <span class="lbl">Por vencer</span>
       </ion-card-content>
     </ion-card>
-    <ion-card class="stat rojo">
+    <ion-card class="stat rojo gm-animar">
       <ion-card-content>
         <span class="num">{{ vencidos }}</span>
         <span class="lbl">Vencidos</span>
@@ -38,18 +43,20 @@
     </ion-card>
   </div>
 
-  <ion-card class="acciones">
+  <!-- Acciones rápidas -->
+  <ion-card class="acciones gm-animar">
     <ion-card-content>
       <h2>Acciones rápidas</h2>
-      <ion-button expand="block" (click)="irRegistrar()">
-        <ion-icon slot="start" name="add-circle-outline"></ion-icon>
-        Registrar alumno
-      </ion-button>
-      <ion-button expand="block" fill="outline" (click)="irVencimientos()">
-        <ion-icon slot="start" name="alarm-outline"></ion-icon>
-        Ver vencimientos
-      </ion-button>
-      <div class="fila">
+
+      <div class="grilla">
+        <ion-button expand="block" (click)="irRegistrar()">
+          <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+          Registrar alumno
+        </ion-button>
+        <ion-button expand="block" fill="outline" (click)="irVencimientos()">
+          <ion-icon slot="start" name="alarm-outline"></ion-icon>
+          Ver vencimientos
+        </ion-button>
         <ion-button expand="block" fill="outline" (click)="irEstadisticas()">
           <ion-icon slot="start" name="stats-chart-outline"></ion-icon>
           Estadísticas

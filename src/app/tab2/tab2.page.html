@@ -1,10 +1,10 @@
 <ion-header [translucent]="true">
-  <ion-toolbar color="primary">
+  <ion-toolbar>
     <ion-title>Socios</ion-title>
   </ion-toolbar>
   <ion-toolbar>
     <ion-searchbar
-      placeholder="Buscar por nombre o apellido"
+      placeholder="Buscar por nombre"
       [debounce]="150"
       (ionInput)="onBusqueda($event)"
     ></ion-searchbar>
@@ -35,30 +35,39 @@
   } @else {
     <ion-list inset>
       @for (p of filtrados(); track p.id) {
-        <ion-item class="fila" [class]="'estado-' + claseEstado[p.estado]">
+        <ion-item class="fila" [class]="'estado-' + claseEstado[p.estado]" (click)="seleccionar(p)" button detail>
           <div class="barra" slot="start"></div>
           <ion-avatar slot="start" class="inicial">
-            <span>{{ p.nombre.charAt(0) }}{{ p.apellido.charAt(0) }}</span>
+            <span>{{ p.nombre.charAt(0) }}{{ p.nombre.trim().split(/\s+/).slice(-1)[0].charAt(0) }}</span>
           </ion-avatar>
           <ion-label>
-            <h2>{{ p.nombre }} {{ p.apellido }}</h2>
+            <h2>
+              {{ p.nombre }}
+              @if (p.pagoMes) {
+                <ion-icon class="pagado-check" name="checkmark-done-outline" aria-label="Cuota del mes pagada"></ion-icon>
+              }
+            </h2>
             <p>
               Vence: {{ formatearFecha(p.fechaVencimiento) }}
               @if (p.telefono) {
                 · <ion-icon name="call-outline"></ion-icon> {{ p.telefono }}
               }
             </p>
-            <ion-chip [class]="'chip-' + claseEstado[p.estado]" (click)="cambiarFiltroDesdeChip(p.estado)">
+            <ion-chip [class]="'chip-' + claseEstado[p.estado]" (click)="cambiarFiltroDesdeChip(p.estado); $event.stopPropagation()">
               <ion-icon name="{{ iconoEstado[p.estado] }}"></ion-icon>
               <ion-label>{{ p.estadoTexto }}</ion-label>
             </ion-chip>
           </ion-label>
-          <ion-button slot="end" fill="clear" (click)="pedirRenovar(p)" aria-label="Renovar cuota">
-            <ion-icon slot="icon-only" name="refresh-outline" color="primary"></ion-icon>
-          </ion-button>
-          <ion-button slot="end" fill="clear" (click)="pedirEliminar(p)" aria-label="Eliminar">
-            <ion-icon slot="icon-only" name="trash-outline" color="danger"></ion-icon>
-          </ion-button>
+          @if (p.telefono) {
+            <ion-button
+              slot="end"
+              fill="clear"
+              (click)="enviarRecordatorio(p); $event.stopPropagation()"
+              aria-label="Enviar recordatorio por WhatsApp"
+            >
+              <ion-icon slot="icon-only" name="logo-whatsapp" color="success"></ion-icon>
+            </ion-button>
+          }
         </ion-item>
       }
     </ion-list>
@@ -69,6 +78,170 @@
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
+
+  <!-- ================= Detalle del socio ================= -->
+  @if (seleccionado(); as s) {
+    <ion-modal [isOpen]="true" (didDismiss)="cerrarDetalle()" [initialBreakpoint]="0.85" [breakpoints]="[0, 0.85]">
+      <ng-template>
+        <ion-header>
+          <ion-toolbar>
+            <ion-title>{{ s.nombre }}</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="cerrarDetalle()">Cerrar</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content>
+          @if (!editando()) {
+            <!-- ---------- Vista ficha ---------- -->
+            <div class="ficha">
+              <ion-item lines="none">
+                <ion-avatar slot="start" class="inicial grande">
+                  <span>{{ s.nombre.charAt(0) }}{{ s.nombre.trim().split(/\s+/).slice(-1)[0].charAt(0) }}</span>
+                </ion-avatar>
+                <ion-label>
+                  <h2>{{ s.nombre }}</h2>
+                  <p>
+                    @if (s.telefono) {
+                      <ion-icon name="call-outline"></ion-icon> {{ s.telefono }}
+                    } @else {
+                      Sin teléfono registrado
+                    }
+                  </p>
+                </ion-label>
+                <ion-chip slot="end" [class]="'chip-' + claseEstado[s.estado]">
+                  <ion-icon name="{{ iconoEstado[s.estado] }}"></ion-icon>
+                  <ion-label>{{ s.estadoTexto }}</ion-label>
+                </ion-chip>
+              </ion-item>
+
+              <ion-list inset>
+                <ion-item>
+                  <ion-icon name="calendar-clear-outline" slot="start" color="primary"></ion-icon>
+                  <ion-label>
+                    <h2>Cuota vigente</h2>
+                    <p>Vence el {{ formatearFecha(s.fechaVencimiento) }}</p>
+                  </ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-icon name="cash-outline" slot="start" color="primary"></ion-icon>
+                  <ion-label>
+                    <h2>{{ formatearMonto(s.montoCuota) }} / mes</h2>
+                    <p>{{ s.pagosAnio }} {{ s.pagosAnio === 1 ? 'pago' : 'pagos' }} registrados este año</p>
+                  </ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-icon name="wallet-outline" slot="start" color="primary"></ion-icon>
+                  <ion-label>
+                    <h2>Últimos pagos</h2>
+                    @if (s.mesesPagados.length === 0) {
+                      <p>Todavía no tiene pagos registrados</p>
+                    }
+                    @else {
+                      <p>{{ s.mesesPagados.slice(0, 6).join(' · ') }}</p>
+                    }
+                  </ion-label>
+                  <ion-note slot="end" color="medium">Mes/año</ion-note>
+                </ion-item>
+              </ion-list>
+
+              <!-- Pago rápido del mes corriente -->
+              <ion-list inset>
+                <ion-item>
+                  <ion-checkbox
+                    class="check-pago"
+                    [checked]="s.pagoMes"
+                    (ionChange)="togglePago(s, $event.detail.checked)"
+                  >
+                    <ion-label class="ion-text-wrap">
+                      <h2>Pagó la cuota de este mes</h2>
+                      <p>Marca, renueva su vencimiento y registra el pago</p>
+                    </ion-label>
+                  </ion-checkbox>
+                </ion-item>
+              </ion-list>
+
+              <!-- Acciones -->
+              <div class="acciones-detalle">
+                <ion-button expand="block" (click)="empezarEditar()">
+                  <ion-icon slot="start" name="create-outline"></ion-icon>
+                  Modificar datos
+                </ion-button>
+                @if (s.telefono) {
+                  <ion-button expand="block" fill="outline" color="success" (click)="enviarRecordatorio(s)">
+                    <ion-icon slot="start" name="logo-whatsapp"></ion-icon>
+                    Mandar mensaje
+                  </ion-button>
+                }
+                <ion-button expand="block" fill="outline" (click)="pedirRenovar(s)">
+                  <ion-icon slot="start" name="refresh-outline"></ion-icon>
+                  Cobrar y renovar cuota
+                </ion-button>
+                <ion-button expand="block" fill="outline" color="warning" (click)="pedirBaja(s)">
+                  <ion-icon slot="start" name="close-circle-outline"></ion-icon>
+                  Dar de baja
+                </ion-button>
+                <ion-button expand="block" fill="clear" color="danger" (click)="pedirEliminar(s)">
+                  <ion-icon slot="start" name="trash-outline"></ion-icon>
+                  Eliminar definitivamente
+                </ion-button>
+              </div>
+            </div>
+          } @else {
+            <!-- ---------- Vista edición ---------- -->
+            <ion-list inset>
+              <ion-item>
+                <ion-icon name="person-outline" slot="start" color="primary"></ion-icon>
+                <ion-input
+                  label="Nombre completo"
+                  labelPlacement="floating"
+                  [value]="nombreEdit()"
+                  (ionInput)="nombreEdit.set($event.detail.value ?? '')"
+                ></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-icon name="call-outline" slot="start" color="primary"></ion-icon>
+                <ion-input
+                  type="tel"
+                  label="Teléfono / WhatsApp"
+                  labelPlacement="floating"
+                  placeholder="351 555 1234"
+                  [value]="telefonoEdit()"
+                  (ionInput)="telefonoEdit.set($event.detail.value ?? '')"
+                ></ion-input>
+              </ion-item>
+              <ion-item>
+                <ion-icon name="cash-outline" slot="start" color="primary"></ion-icon>
+                <ion-input
+                  type="number"
+                  inputmode="numeric"
+                  min="0"
+                  label="Monto de la cuota"
+                  labelPlacement="floating"
+                  [value]="montoEdit()"
+                  (ionInput)="montoEdit.set($event.detail.value ?? '')"
+                >
+                  <ion-text slot="end" class="sufijo-monto">$/mes</ion-text>
+                </ion-input>
+              </ion-item>
+            </ion-list>
+            @if (errorEdicion()) {
+              <ion-note class="error-edicion" color="danger">{{ errorEdicion() }}</ion-note>
+            }
+            <div class="acciones-detalle">
+              <ion-button expand="block" (click)="guardarEdicion()">
+                <ion-icon slot="start" name="checkmark-outline"></ion-icon>
+                Guardar cambios
+              </ion-button>
+              <ion-button expand="block" fill="clear" color="medium" (click)="cancelarEditar()">
+                Cancelar
+              </ion-button>
+            </div>
+          }
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+  }
 
   @if (alertaRenovar(); as cfg) {
     <ion-alert
@@ -85,6 +258,15 @@
       [message]="cfg.message"
       [buttons]="cfg.buttons"
       (didDismiss)="alertaEliminar.set(null)"
+    ></ion-alert>
+  }
+
+  @if (alertaPago(); as cfg) {
+    <ion-alert
+      [header]="cfg.header"
+      [message]="cfg.message"
+      [buttons]="cfg.buttons"
+      (didDismiss)="alertaPago.set(null)"
     ></ion-alert>
   }
 </ion-content>

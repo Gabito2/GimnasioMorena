@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Gimnasio Morena</string>
+    <string name="title_activity_main">Gimnasio Morena</string>
+    <string name="package_name">com.gymmorena</string>
+    <string name="custom_url_scheme">com.gymmorena</string>
+</resources>
