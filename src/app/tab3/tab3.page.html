@@ -1,10 +1,10 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Registrar</ion-title>
+    <ion-title>Registrar alumno</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="form-content">
   <form [formGroup]="form" (ngSubmit)="guardar()">
     <!-- Intro -->
     <div class="intro gm-animar">
@@ -13,93 +13,121 @@
       </div>
       <div class="intro-texto">
         <h1>Nuevo alumno</h1>
-        <p>Completá los datos y la primera cuota vence a los 30 días.</p>
+        <p>Completá los datos para darlo de alta en el gimnasio.</p>
       </div>
     </div>
 
-    <!-- ---------- Datos del alumno ---------- -->
-    <span class="titulo-seccion gm-animar">Datos del alumno</span>
-    <br>
-    <ion-list inset class="gm-animar">
-      <ion-item>
-        <ion-icon name="person-outline" slot="start" color="primary"></ion-icon>
-        <ion-input
-          formControlName="nombre"
-          label="Nombre completo *"
-          labelPlacement="floating"
-          placeholder="Juan Pérez"
-        ></ion-input>
-      </ion-item>
-      @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
-        <ion-note color="danger" class="error">Ingresá el nombre completo (mínimo 2 letras)</ion-note>
-      }
+    <!-- Datos del alumno -->
+    <ion-card class="gm-animar form-card">
+      <ion-card-header class="form-card-header">
+        <div class="header-row">
+          <ion-icon name="id-card-outline" color="primary"></ion-icon>
+          <ion-card-title>Datos personales</ion-card-title>
+        </div>
+        <ion-card-subtitle>Información básica del alumno</ion-card-subtitle>
+      </ion-card-header>
 
-      <ion-item>
-        <ion-icon name="call-outline" slot="start" color="primary"></ion-icon>
-        <ion-input
-          formControlName="telefono"
-          type="tel"
-          label="WhatsApp"
-          labelPlacement="floating"
-          placeholder="351 555 1234"
-        ></ion-input>
-      </ion-item>
-      @if (form.controls.telefono.touched && form.controls.telefono.invalid) {
-        <ion-note color="danger" class="error">El teléfono tiene caracteres no válidos</ion-note>
-      }
+      <ion-card-content class="form-card-content">
+        <div class="field-group">
+          <ion-item lines="none" class="field-item">
+            <ion-icon name="person-outline" slot="start" color="primary"></ion-icon>
+            <ion-input
+              formControlName="nombre"
+              label="Nombre completo *"
+              labelPlacement="floating"
+              autocomplete="name"
+              autocapitalize="words"
+              placeholder="Ej.: Juan Pérez"
+            ></ion-input>
+          </ion-item>
+          @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+            <ion-note color="danger" class="field-error">Ingresá el nombre completo (mínimo 2 letras)</ion-note>
+          }
+        </div>
 
-      <ion-item>
-        <ion-icon name="calendar-outline" slot="start" color="primary"></ion-icon>
-        <ion-input
-          formControlName="fechaIngreso"
-          label="Fecha de ingreso"
-          labelPlacement="floating"
-          type="date"
-          [max]="hoyISO"
-          (ionChange)="onFechaIngresoChange($event)"
-        ></ion-input>
-      </ion-item>
-    </ion-list>
+        <div class="field-group">
+          <ion-item lines="none" class="field-item">
+            <ion-icon name="call-outline" slot="start" color="primary"></ion-icon>
+            <ion-input
+              formControlName="telefono"
+              type="tel"
+              inputmode="tel"
+              label="WhatsApp"
+              labelPlacement="floating"
+              autocomplete="tel"
+              placeholder="Ej.: 351 555 1234"
+            ></ion-input>
+          </ion-item>
+          @if (form.controls.telefono.touched && form.controls.telefono.invalid) {
+            <ion-note color="danger" class="field-error">El teléfono tiene caracteres no válidos</ion-note>
+          }
+        </div>
 
-    <!-- ---------- Cuota ---------- -->
-    <span class="titulo-seccion gm-animar">Cuota mensual</span>
-    <br>
-    <ion-list inset class="gm-animar">
-      <ion-item>
-        <ion-icon name="cash-outline" slot="start" color="primary"></ion-icon>
-        <ion-input
-          formControlName="montoCuota"
-          type="number"
-          inputmode="numeric"
-          min="0"
-          step="500"
-          label="Monto de la cuota *"
-          labelPlacement="floating"
-          placeholder="15000"
-        ></ion-input>
-        <ion-text slot="end" class="sufijo-monto">$/mes</ion-text>
-      </ion-item>
-      @if (form.controls.montoCuota.touched && form.controls.montoCuota.invalid) {
-        <ion-note color="danger" class="error">Ingresá un monto válido (0 o mayor)</ion-note>
-      }
-    </ion-list>
+        <div class="field-group">
+          <ion-item lines="none" class="field-item">
+            <ion-icon name="calendar-outline" slot="start" color="primary"></ion-icon>
+            <ion-input
+              formControlName="fechaIngreso"
+              label="Fecha de ingreso"
+              labelPlacement="floating"
+              type="date"
+              [max]="hoyISO"
+              (ionChange)="onFechaIngresoChange($event)"
+            ></ion-input>
+          </ion-item>
+        </div>
+      </ion-card-content>
+    </ion-card>
 
-    <!-- Montos frecuentes -->
-    <div class="montos-rapidos gm-animar">
-      <span class="titulo-mini">Montos frecuentes</span>
-      <div class="chips">
-        @for (m of montosRapidos; track m) {
-          <button
-            type="button"
-            class="monto-chip"
-            [class.activa]="montoSeleccionado() === m"
-            (click)="setMonto(m)"
-          >
-            ${{ m.toLocaleString('es-AR') }}
-          </button>
-        }
-      </div>
-    </div>
+    <!-- Cuota -->
+    <ion-card class="gm-animar form-card">
+      <ion-card-header class="form-card-header">
+        <div class="header-row">
+          <ion-icon name="cash-outline" color="primary"></ion-icon>
+          <ion-card-title>Cuota mensual</ion-card-title>
+        </div>
+        <ion-card-subtitle>Definí el monto que abonará por mes</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content class="form-card-content">
+        <div class="field-group">
+          <ion-item lines="none" class="field-item">
+            <ion-icon name="wallet-outline" slot="start" color="primary"></ion-icon>
+            <ion-input
+              formControlName="montoCuota"
+              type="number"
+              inputmode="numeric"
+              min="0"
+              step="500"
+              label="Monto de la cuota *"
+              labelPlacement="floating"
+              placeholder="15000"
+            ></ion-input>
+            <ion-text slot="end" class="sufijo-monto">$/mes</ion-text>
+          </ion-item>
+          @if (form.controls.montoCuota.touched && form.controls.montoCuota.invalid) {
+            <ion-note color="danger" class="field-error">Ingresá un monto válido (0 o mayor)</ion-note>
+          }
+        </div>
+
+        <!-- Montos frecuentes -->
+        <div class="montos-rapidos">
+          <span class="titulo-mini">Montos frecuentes</span>
+          <div class="chips">
+            @for (m of montosRapidos; track m) {
+              <button
+                type="button"
+                class="monto-chip"
+                [class.activa]="montoSeleccionado() === m"
+                (click)="setMonto(m)"
+              >
+                ${{ m.toLocaleString('es-AR') }}
+              </button>
+            }
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
 
     <!-- Preview del vencimiento -->
     <div class="preview gm-animar">
@@ -109,7 +137,7 @@
       <div class="preview-texto">
         <span class="preview-label">Primer vencimiento</span>
         <span class="preview-fecha">{{ formatearPreview(primeraVencimiento) }}</span>
-        <span class="preview-nota">30 días después del ingreso</span>
+        <span class="preview-nota">30 días después de la fecha de ingreso</span>
       </div>
     </div>
 

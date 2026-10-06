@@ -1,13 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonInput,
-  IonButton, IonNote, IonIcon, IonText, IonSpinner,
+  IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent,
+  IonList, IonItem, IonInput, IonButton, IonNote, IonIcon, IonText, IonSpinner,
 } from '@ionic/angular';
 import { ReactiveFormsModule, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { personOutline, callOutline, cashOutline, calendarOutline, saveOutline, personAddOutline } from 'ionicons/icons';
+import { personOutline, callOutline, cashOutline, calendarOutline, saveOutline, personAddOutline, idCardOutline, walletOutline } from 'ionicons/icons';
 import { GymService } from '../services/gym.service';
 
 @Component({
@@ -16,8 +16,8 @@ import { GymService } from '../services/gym.service';
   styleUrls: ['tab3.page.scss'],
   imports: [
     ReactiveFormsModule,
-    IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonInput,
-    IonButton, IonNote, IonIcon, IonText, IonSpinner,
+    IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent,
+    IonItem, IonInput, IonButton, IonNote, IonIcon, IonText, IonSpinner,
   ],
 })
 export class Tab3Page {
@@ -50,7 +50,7 @@ export class Tab3Page {
   });
 
   constructor() {
-    addIcons({ personOutline, callOutline, cashOutline, calendarOutline, saveOutline, personAddOutline });
+    addIcons({ personOutline, callOutline, cashOutline, calendarOutline, saveOutline, personAddOutline, idCardOutline, walletOutline });
   }
   /** Atajo para los montos frecuentes. Tocar de nuevo deselecciona. */
   setMonto(monto: number): void {
