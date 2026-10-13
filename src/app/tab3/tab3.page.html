@@ -1,149 +1,163 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>Registrar alumno</ion-title>
+    <ion-title>Nuevo alumno</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="form-content">
+<ion-content [fullscreen]="true">
   <form [formGroup]="form" (ngSubmit)="guardar()">
-    <!-- Intro -->
-    <div class="intro gm-animar">
-      <div class="intro-icono">
+    <!-- ================= Encabezado ================= -->
+    <header class="alta gm-animar">
+      <div class="alta-icono">
         <ion-icon aria-hidden="true" name="person-add-outline"></ion-icon>
       </div>
-      <div class="intro-texto">
-        <h1>Nuevo alumno</h1>
-        <p>Completá los datos para darlo de alta en el gimnasio.</p>
+      <div class="alta-texto">
+        <h1>Alta de alumno</h1>
+        <p>Completá los datos: el primer vencimiento se calcula solo, 30 días desde el ingreso.</p>
       </div>
-    </div>
+    </header>
 
-    <!-- Datos del alumno -->
-    <ion-card class="gm-animar form-card">
-      <ion-card-header class="form-card-header">
-        <div class="header-row">
-          <ion-icon name="id-card-outline" color="primary"></ion-icon>
-          <ion-card-title>Datos personales</ion-card-title>
-        </div>
-        <ion-card-subtitle>Información básica del alumno</ion-card-subtitle>
-      </ion-card-header>
+    <!-- ================= 1. Datos personales ================= -->
+    <section class="bloque gm-animar">
+      <h2 class="bloque-titulo"><span class="paso">1</span> Datos personales</h2>
 
-      <ion-card-content class="form-card-content">
-        <div class="field-group">
-          <ion-item lines="none" class="field-item">
-            <ion-icon name="person-outline" slot="start" color="primary"></ion-icon>
-            <ion-input
-              formControlName="nombre"
-              label="Nombre completo *"
-              labelPlacement="floating"
-              autocomplete="name"
-              autocapitalize="words"
-              placeholder="Ej.: Juan Pérez"
-            ></ion-input>
-          </ion-item>
-          @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
-            <ion-note color="danger" class="field-error">Ingresá el nombre completo (mínimo 2 letras)</ion-note>
+      <ion-item lines="none" class="campo">
+        <ion-icon name="person-outline" slot="start" aria-hidden="true"></ion-icon>
+        <ion-input
+          formControlName="nombre"
+          label="Nombre y apellido"
+          labelPlacement="floating"
+          autocomplete="name"
+          autocapitalize="words"
+          placeholder="Lucía Fernández"
+          helperText="Como querés que aparezca en la lista"
+          errorText="Ingresá el nombre completo (mínimo 2 letras)"
+        >
+          <button
+            type="button"
+            slot="end"
+            class="accion limpiar"
+            aria-label="Borrar el nombre"
+            (click)="limpiarNombre()"
+          >
+            <ion-icon name="close-circle" aria-hidden="true"></ion-icon>
+          </button>
+          <ion-icon slot="end" class="accion tick" name="checkmark-circle" aria-hidden="true"></ion-icon>
+        </ion-input>
+      </ion-item>
+
+      <ion-item lines="none" class="campo">
+        <ion-icon name="logo-whatsapp" slot="start" aria-hidden="true"></ion-icon>
+        <ion-input
+          formControlName="telefono"
+          type="tel"
+          inputmode="tel"
+          label="WhatsApp"
+          labelPlacement="floating"
+          autocomplete="tel"
+          placeholder="351 555 1234"
+          helperText="Opcional · se usa para los recordatorios"
+          errorText="Ese teléfono tiene caracteres no válidos"
+        >
+          <button
+            type="button"
+            slot="end"
+            class="accion limpiar"
+            aria-label="Borrar el teléfono"
+            (click)="limpiarTelefono()"
+          >
+            <ion-icon name="close-circle" aria-hidden="true"></ion-icon>
+          </button>
+          <ion-icon slot="end" class="accion tick" name="checkmark-circle" aria-hidden="true"></ion-icon>
+        </ion-input>
+      </ion-item>
+
+      <ion-item lines="none" class="campo">
+        <ion-icon name="calendar-outline" slot="start" aria-hidden="true"></ion-icon>
+        <ion-input
+          formControlName="fechaIngreso"
+          type="date"
+          label="Fecha de ingreso"
+          labelPlacement="floating"
+          [max]="hoyISO"
+          helperText="Desde acá contamos la primera cuota"
+          (ionChange)="onFechaIngresoChange($event)"
+        ></ion-input>
+      </ion-item>
+    </section>
+
+    <!-- ================= 2. Cuota mensual ================= -->
+    <section class="bloque gm-animar">
+      <h2 class="bloque-titulo"><span class="paso">2</span> Cuota mensual</h2>
+
+      <ion-item lines="none" class="campo">
+        <ion-icon name="cash-outline" slot="start" aria-hidden="true"></ion-icon>
+        <ion-input
+          formControlName="montoCuota"
+          type="number"
+          inputmode="numeric"
+          min="0"
+          step="500"
+          label="Monto de la cuota"
+          labelPlacement="floating"
+          placeholder="23000"
+          helperText="Se puede actualizar cuando quieras"
+          errorText="Ingresá un monto válido (0 o mayor)"
+        >
+          <span slot="end" class="moneda">$/mes</span>
+          <ion-icon slot="end" class="accion tick" name="checkmark-circle" aria-hidden="true"></ion-icon>
+        </ion-input>
+      </ion-item>
+
+      <div class="montos">
+        <span class="mini-titulo">Montos frecuentes</span>
+        <div class="chips">
+          @for (m of montosRapidos; track m) {
+            <button
+              type="button"
+              class="monto-chip"
+              [class.activa]="montoSeleccionado() === m"
+              (click)="setMonto(m)"
+            >
+              ${{ m.toLocaleString('es-AR') }}
+            </button>
           }
         </div>
-
-        <div class="field-group">
-          <ion-item lines="none" class="field-item">
-            <ion-icon name="call-outline" slot="start" color="primary"></ion-icon>
-            <ion-input
-              formControlName="telefono"
-              type="tel"
-              inputmode="tel"
-              label="WhatsApp"
-              labelPlacement="floating"
-              autocomplete="tel"
-              placeholder="Ej.: 351 555 1234"
-            ></ion-input>
-          </ion-item>
-          @if (form.controls.telefono.touched && form.controls.telefono.invalid) {
-            <ion-note color="danger" class="field-error">El teléfono tiene caracteres no válidos</ion-note>
-          }
-        </div>
-
-        <div class="field-group">
-          <ion-item lines="none" class="field-item">
-            <ion-icon name="calendar-outline" slot="start" color="primary"></ion-icon>
-            <ion-input
-              formControlName="fechaIngreso"
-              label="Fecha de ingreso"
-              labelPlacement="floating"
-              type="date"
-              [max]="hoyISO"
-              (ionChange)="onFechaIngresoChange($event)"
-            ></ion-input>
-          </ion-item>
-        </div>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Cuota -->
-    <ion-card class="gm-animar form-card">
-      <ion-card-header class="form-card-header">
-        <div class="header-row">
-          <ion-icon name="cash-outline" color="primary"></ion-icon>
-          <ion-card-title>Cuota mensual</ion-card-title>
-        </div>
-        <ion-card-subtitle>Definí el monto que abonará por mes</ion-card-subtitle>
-      </ion-card-header>
-
-      <ion-card-content class="form-card-content">
-        <div class="field-group">
-          <ion-item lines="none" class="field-item">
-            <ion-icon name="wallet-outline" slot="start" color="primary"></ion-icon>
-            <ion-input
-              formControlName="montoCuota"
-              type="number"
-              inputmode="numeric"
-              min="0"
-              step="500"
-              label="Monto de la cuota *"
-              labelPlacement="floating"
-              placeholder="15000"
-            ></ion-input>
-            <ion-text slot="end" class="sufijo-monto">$/mes</ion-text>
-          </ion-item>
-          @if (form.controls.montoCuota.touched && form.controls.montoCuota.invalid) {
-            <ion-note color="danger" class="field-error">Ingresá un monto válido (0 o mayor)</ion-note>
-          }
-        </div>
-
-        <!-- Montos frecuentes -->
-        <div class="montos-rapidos">
-          <span class="titulo-mini">Montos frecuentes</span>
-          <div class="chips">
-            @for (m of montosRapidos; track m) {
-              <button
-                type="button"
-                class="monto-chip"
-                [class.activa]="montoSeleccionado() === m"
-                (click)="setMonto(m)"
-              >
-                ${{ m.toLocaleString('es-AR') }}
-              </button>
-            }
-          </div>
-        </div>
-      </ion-card-content>
-    </ion-card>
-
-    <!-- Preview del vencimiento -->
-    <div class="preview gm-animar">
-      <div class="preview-icono">
-        <ion-icon name="calendar-outline"></ion-icon>
       </div>
-      <div class="preview-texto">
-        <span class="preview-label">Primer vencimiento</span>
-        <span class="preview-fecha">{{ formatearPreview(primeraVencimiento) }}</span>
-        <span class="preview-nota">30 días después de la fecha de ingreso</span>
-      </div>
-    </div>
+    </section>
 
-    <!-- Acciones -->
-    <div class="pie gm-animar">
-      <ion-button expand="block" type="submit" [disabled]="guardando()">
+    <!-- ================= Resumen en vivo ================= -->
+    <section class="bloque resumen gm-animar">
+      <h2 class="bloque-titulo">Resumen del alta</h2>
+
+      <div class="resumen-filas" aria-live="polite">
+        <div class="resumen-fila">
+          <span class="resumen-lbl">Alumno</span>
+          <span class="resumen-valor" [class.sin-dato]="!form.controls.nombre.value">
+            {{ form.controls.nombre.value || 'Sin completar' }}
+          </span>
+        </div>
+
+        <div class="resumen-fila">
+          <span class="resumen-lbl">Cuota</span>
+          <span class="resumen-valor">${{ (form.controls.montoCuota.value || 0).toLocaleString('es-AR') }} / mes</span>
+        </div>
+
+        <div class="resumen-fila">
+          <span class="resumen-lbl">Ingreso</span>
+          <span class="resumen-valor">{{ formatearPreview(form.controls.fechaIngreso.value) }}</span>
+        </div>
+
+        <div class="resumen-fila destacada">
+          <span class="resumen-lbl">Primer vencimiento</span>
+          <span class="resumen-valor">{{ formatearPreview(primeraVencimiento) }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= Acciones ================= -->
+    <footer class="pie">
+      <ion-button type="submit" [disabled]="guardando()">
         @if (guardando()) {
           <ion-spinner name="crescent" slot="start"></ion-spinner>
           Guardando…
@@ -152,9 +166,7 @@
           Guardar alumno
         }
       </ion-button>
-      <ion-button expand="block" fill="clear" color="medium" type="button" (click)="cancelar()">
-        Cancelar
-      </ion-button>
-    </div>
+      <ion-button fill="clear" color="medium" type="button" (click)="cancelar()">Cancelar</ion-button>
+    </footer>
   </form>
 </ion-content>

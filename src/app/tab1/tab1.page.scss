@@ -1,110 +1,179 @@
 :host {
-  /* ---------- Hero (plano, sin halo) ---------- */
+  /* ============================================================
+     Inicio (dashboard)
+     Hero con aura dorada, KPIs y accesos rápidos en mosaico.
+     ============================================================ */
+
+  /* ---------- Hero ---------- */
   .hero {
     position: relative;
     text-align: center;
-    padding: 32px 20px 24px;
+    padding: 40px 20px 26px;
+
+    /* aura que respira detrás del emblema */
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -70px 0 auto;
+      height: 260px;
+      background: radial-gradient(46% 58% at 50% 34%, rgba(234, 179, 8, 0.16) 0%, rgba(234, 179, 8, 0) 72%);
+      pointer-events: none;
+    }
 
     .hero-icono {
+      position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 64px;
-      height: 64px;
-      border-radius: 18px;
-      background: var(--gm-acento-suave);
+      width: 76px;
+      height: 76px;
+      border-radius: 24px;
+      background: var(--gm-grad-oro-suave), var(--gm-card-bg);
       border: 1px solid var(--gm-acento-borde);
+      box-shadow:
+        0 22px 46px -24px rgba(234, 179, 8, 0.75),
+        inset 0 1px 0 rgba(255, 255, 255, 0.09);
 
       ion-icon {
-        font-size: 32px;
+        font-size: 35px;
         color: var(--ion-color-primary);
+        filter: drop-shadow(0 4px 14px rgba(234, 179, 8, 0.4));
       }
     }
 
     h1 {
-      margin: 16px 0 4px;
-      font-size: 26px;
+      position: relative;
+      margin: 18px 0 6px;
+      font-size: 28px;
       font-weight: 800;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.035em;
       color: var(--gm-texto);
 
       .acento {
-        color: var(--ion-color-primary);
+        background: var(--gm-grad-oro);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
       }
     }
 
     .lema {
+      position: relative;
       margin: 0;
-      color: var(--gm-texto-suave);
-      font-size: 13.5px;
-      font-weight: 500;
-      letter-spacing: 0.02em;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--gm-texto-tenue);
     }
   }
 
   /* ---------- Mensaje del día ---------- */
   .mensaje {
-    margin-top: 12px;
+    margin-top: 16px;
+
+    &::before {
+      height: 2px;
+      background: var(--gm-grad-oro);
+    }
 
     ion-card-content {
-      padding: 14px 16px;
+      padding: 16px;
+    }
+
+    .saludo {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.5;
+      text-align: center;
+      color: var(--gm-texto);
     }
   }
 
-  .saludo {
-    margin: 0;
-    font-size: 14.5px;
-    font-weight: 500;
-    text-align: center;
-    color: var(--gm-texto);
-  }
-
-  /* ---------- Stats ---------- */
+  /* ---------- KPIs ---------- */
   .resumen {
     display: flex;
     gap: 10px;
-    margin: 4px 16px 0;
+    margin: 10px 16px 0;
 
     .stat {
+      --gm-luz: rgba(234, 179, 8, 0.16);
       flex: 1;
       margin: 0;
+      border-radius: var(--gm-radio-lg);
+
+      /* franja de color + resplandor superior */
+      &::before {
+        height: 2px;
+        background: var(--ion-color-primary);
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset: -60% 0 auto;
+        height: 190px;
+        background: radial-gradient(48% 58% at 50% 42%, var(--gm-luz) 0%, rgba(0, 0, 0, 0) 72%);
+        pointer-events: none;
+      }
 
       ion-card-content {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 14px 4px 12px;
+        gap: 3px;
+        padding: 18px 6px 15px;
       }
 
       .num {
-        font-size: 24px;
+        font-size: 26px;
         font-weight: 800;
-        line-height: 1.1;
+        line-height: 1.05;
+        letter-spacing: -0.03em;
         font-variant-numeric: tabular-nums;
         color: var(--ion-color-primary);
       }
 
       .lbl {
-        font-size: 11.5px;
-        font-weight: 500;
+        font-size: 10.5px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        text-align: center;
         color: var(--gm-texto-suave);
       }
 
-      &.amarillo .num { color: var(--ion-color-warning); }
-      &.rojo .num { color: var(--ion-color-danger); }
+      &.amarillo {
+        --gm-luz: rgba(251, 146, 60, 0.16);
+
+        &::before { background: var(--ion-color-warning); }
+        .num { color: var(--ion-color-warning); }
+      }
+
+      &.rojo {
+        --gm-luz: rgba(248, 113, 113, 0.16);
+
+        &::before { background: var(--ion-color-danger); }
+        .num { color: var(--ion-color-danger); }
+      }
     }
   }
 
-  /* ---------- Acciones rápidas ---------- */
+  /* ---------- Acciones rápidas (mosaico) ---------- */
   .acciones {
-    margin-top: 12px;
+    margin-top: 14px;
+
+    ion-card-content {
+      padding: 16px;
+    }
 
     h2 {
-      font-size: 13px;
+      margin: 0 0 14px;
+      font-size: 11.5px;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin: 0 0 12px;
+      letter-spacing: 0.12em;
       color: var(--gm-texto-suave);
     }
 
@@ -115,12 +184,26 @@
     }
 
     ion-button {
-      --padding-start: 8px;
-      --padding-end: 8px;
-      font-size: 13.5px;
+      margin: 0;
+      --padding-start: 10px;
+      --padding-end: 10px;
+      --padding-top: 16px;
+      --padding-bottom: 16px;
+      font-size: 12.5px;
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.25;
+
+      /* icono arriba, texto abajo: se comporta como un tile */
+      &::part(native) {
+        flex-direction: column;
+        gap: 9px;
+        border-radius: var(--gm-radio);
+      }
 
       ion-icon {
-        font-size: 18px;
+        font-size: 23px;
+        margin-inline: 0;
       }
     }
   }

@@ -1,71 +1,92 @@
 /* Sin envoltorio `:host`: el contenido del ion-modal se portaliza fuera del
    componente, y Angular scopea estas reglas por atributo (_ngcontent). */
-ion-toolbar {
-  .anio {
-    font-size: 17px;
-    font-weight: 800;
-    color: var(--gm-texto);
-    padding: 0 2px;
-    min-width: 52px;
-    text-align: center;
-  }
-}
 
-ion-searchbar {
-  padding-top: 8px;
-  padding-bottom: 4px;
-}
-
-.vacio {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* ---------- Navegación de año (cabecera del modal) ---------- */
+ion-toolbar .anio {
+  min-width: 56px;
+  padding: 0 2px;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
   text-align: center;
-  padding: 64px 24px;
-  color: var(--gm-texto-suave);
-
-  ion-icon {
-    font-size: 48px;
-    margin-bottom: 12px;
-    opacity: 0.5;
-  }
+  color: var(--gm-oro-1);
 }
 
-/* ---------- Filas del selector ---------- */
+/* ---------- Buscador ---------- */
+ion-searchbar {
+  padding-bottom: 0;
+}
+
+/* Las filas son tarjetas sueltas: la lista principal pierde la superficie
+   agrupada que global.scss aplica a las listas inset. */
+ion-content > ion-list[inset] {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+}
+
+/* ---------- Selector de socio (fila tarjeta) ---------- */
 ion-item.fila-pago {
-  --background: var(--gm-card-bg);
-  --min-height: 60px;
-  border-radius: 12px;
-  margin: 6px 16px;
+  --background: var(--gm-grad-card);
+  --border-radius: var(--gm-radio-lg);
+  --padding-start: 14px;
+  --inner-padding-end: 12px;
+  --min-height: 70px;
+  margin: 10px 16px;
+  border-radius: var(--gm-radio-lg);
   border: 1px solid var(--gm-card-border);
+  box-shadow: var(--gm-sombra-1);
+  overflow: hidden;
+  transition: transform var(--gm-trans), border-color var(--gm-trans);
+
+  &:active {
+    transform: scale(0.99);
+  }
+
+  /* el icono de estado pasa a ser una insignia */
+  ion-icon[slot='start'] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    margin-inline-end: 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    font-size: 20px;
+  }
+
+  /* Ionic convierte el `color` en la clase .ion-color-success, no en atributo */
+  ion-icon.ion-color-success {
+    background: var(--gm-tinte-verde);
+    box-shadow: 0 0 18px -5px rgba(74, 222, 128, 0.6);
+  }
 
   h2 {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-weight: 600;
+    gap: 8px;
     font-size: 15px;
-    color: var(--gm-texto);
-  }
-
-  p {
-    color: var(--gm-texto-suave);
-    font-size: 12.5px;
   }
 
   .chip-baja {
-    margin: 0;
     height: 20px;
-    font-size: 11px;
+    margin: 0;
+    font-size: 10.5px;
   }
 }
 
-/* ---------- Cabecera del socio en la grilla ---------- */
+/* ---------- Cabecera del socio dentro del modal ---------- */
 .cabecera-socio {
   display: flex;
   align-items: center;
-  gap: 4px;
-  margin: 4px 8px 0;
+  gap: 10px;
+  margin: 12px 16px 0;
 
   .datos {
     flex: 1;
@@ -75,6 +96,7 @@ ion-item.fila-pago {
       margin: 0;
       font-size: 17px;
       font-weight: 800;
+      letter-spacing: -0.02em;
       color: var(--gm-texto);
       white-space: nowrap;
       overflow: hidden;
@@ -82,10 +104,15 @@ ion-item.fila-pago {
     }
 
     p {
-      margin: 2px 0 0;
-      font-size: 12px;
+      margin: 3px 0 0;
+      font-size: 12.5px;
+      line-height: 1.45;
       color: var(--gm-texto-suave);
     }
+  }
+
+  ion-chip {
+    flex-shrink: 0;
   }
 }
 
@@ -104,79 +131,102 @@ ion-item.fila-pago {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1px;
-  padding: 14px 4px 10px;
-  border-radius: 12px;
+  gap: 2px;
+  padding: 16px 4px 12px;
   border: 1px solid var(--gm-card-border);
-  background: var(--gm-card-bg);
+  border-radius: var(--gm-radio);
+  background: rgba(255, 255, 255, 0.03);
   color: var(--gm-texto);
   font: inherit;
   cursor: pointer;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition:
+    border-color var(--gm-trans),
+    background var(--gm-trans),
+    box-shadow var(--gm-trans),
+    transform var(--gm-trans);
+
+  &:active:not(.futuro) {
+    transform: scale(0.96);
+  }
 
   .nombre {
-    font-size: 14.5px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
   }
 
   .anio-mini {
-    font-size: 10.5px;
-    color: var(--gm-texto-suave);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--gm-texto-tenue);
   }
 
   .check {
     position: absolute;
-    top: 5px;
-    right: 6px;
-    font-size: 16px;
+    top: 6px;
+    right: 7px;
+    font-size: 15px;
     color: var(--ion-color-success);
   }
 
+  /* mes en curso: marco dorado */
   &.actual {
     border-color: var(--gm-acento-borde);
     background: var(--gm-acento-suave);
+    box-shadow: var(--gm-anillo-oro);
 
     .nombre {
-      color: var(--ion-color-primary);
+      color: var(--gm-oro-1);
     }
   }
 
+  /* mes cobrado: verde con luz propia */
   &.pagado {
-    background: rgba(var(--ion-color-success-rgb), 0.1);
-    border-color: rgba(var(--ion-color-success-rgb), 0.4);
+    border-color: rgba(74, 222, 128, 0.42);
+    background: var(--gm-tinte-verde);
+    box-shadow: 0 14px 28px -20px rgba(74, 222, 128, 0.95);
 
     .nombre {
       color: var(--ion-color-success);
     }
+
+    .anio-mini {
+      color: rgba(74, 222, 128, 0.7);
+    }
+  }
+
+  /* mes en curso ya cobrado: el verde manda, el anillo dorado lo distingue */
+  &.actual.pagado {
+    border-color: var(--gm-acento-borde);
+    box-shadow: var(--gm-anillo-oro), 0 14px 28px -20px rgba(74, 222, 128, 0.95);
   }
 
   &.futuro {
-    opacity: 0.4;
+    opacity: 0.34;
     cursor: default;
   }
 }
 
 .ayuda {
-  margin: 10px 20px 4px;
+  margin: 12px 20px 4px;
   font-size: 12.5px;
-  line-height: 1.5;
+  line-height: 1.55;
   color: var(--gm-texto-suave);
 }
 
-/* ---------- Historial ---------- */
+/* ---------- Historial completo ---------- */
 .historial {
   h2 {
-    margin: 0 0 10px;
+    margin: 0 0 12px;
     font-size: 15px;
     font-weight: 700;
+    letter-spacing: -0.02em;
     color: var(--gm-texto);
   }
 
   p {
     margin: 0;
     font-size: 13.5px;
-    color: var(--gm-texto-suave);
   }
 
   .lista-pagos {
@@ -188,11 +238,13 @@ ion-item.fila-pago {
   .pago-pill {
     display: inline-flex;
     align-items: center;
-    padding: 5px 12px;
+    padding: 6px 13px;
     border-radius: 999px;
-    background: rgba(var(--ion-color-success-rgb), 0.1);
+    background: var(--gm-tinte-verde);
+    border: 1px solid rgba(74, 222, 128, 0.28);
     color: var(--ion-color-success);
     font-size: 12.5px;
     font-weight: 600;
+    font-variant-numeric: tabular-nums;
   }
 }

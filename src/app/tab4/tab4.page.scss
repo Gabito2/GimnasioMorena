@@ -1,160 +1,187 @@
 :host {
+  /* ============================================================
+     Estadísticas
+     Cada métrica trae su propio color; el color se propaga con dos
+     variables locales para no repetir reglas.
+     ============================================================ */
+
   /* ---------- Grilla de métricas ---------- */
   .grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
-    padding: 12px 16px 0;
+    padding: 14px 16px 0;
 
     .metrica {
+      --gm-tinte: var(--gm-acento-medio);
+      --gm-color: var(--ion-color-primary);
       margin: 0;
-      position: relative;
-      overflow: hidden;
 
-      /* línea de acento superior */
+      /* franja superior del color de la métrica */
       &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
         height: 2px;
-        background: var(--ion-color-primary);
-        opacity: 0.9;
+        background: var(--gm-color);
       }
-
-      &.verde::before { background: var(--ion-color-success); }
-      &.amarillo::before { background: var(--ion-color-warning); }
-      &.rojo::before { background: var(--ion-color-danger); }
 
       ion-card-content {
         display: flex;
         flex-direction: column;
-        gap: 2px;
-        padding: 14px 14px 12px;
+        gap: 9px;
+        padding: 16px;
       }
 
+      /* el icono pasa a ser una insignia tintada */
       ion-icon {
-        font-size: 20px;
-        color: var(--ion-color-primary);
-        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        background: var(--gm-tinte);
+        color: var(--gm-color);
+        font-size: 19px;
       }
 
       .num {
-        font-size: 24px;
+        font-size: 26px;
         font-weight: 800;
-        line-height: 1.15;
+        line-height: 1.05;
+        letter-spacing: -0.035em;
         font-variant-numeric: tabular-nums;
+        color: var(--gm-color);
       }
 
       .lbl {
         font-size: 11.5px;
+        line-height: 1.35;
         color: var(--gm-texto-suave);
+      }
+
+      &.verde {
+        --gm-tinte: var(--gm-tinte-verde);
+        --gm-color: var(--ion-color-success);
+
+        &::before { background: var(--ion-color-success); }
+      }
+
+      &.amarillo {
+        --gm-tinte: var(--gm-tinte-naranja);
+        --gm-color: var(--ion-color-warning);
+
+        &::before { background: var(--ion-color-warning); }
+      }
+
+      &.rojo {
+        --gm-tinte: var(--gm-tinte-rojo);
+        --gm-color: var(--ion-color-danger);
+
+        &::before { background: var(--ion-color-danger); }
       }
     }
 
-    .verde ion-icon, .verde .num { color: var(--ion-color-success); }
-    .amarillo ion-icon, .amarillo .num { color: var(--ion-color-warning); }
-    .rojo ion-icon, .rojo .num { color: var(--ion-color-danger); }
-
+    /* Ingresos: métrica destacada, ancho completo */
     .ingreso {
       grid-column: 1 / -1;
+      --gm-tinte: var(--gm-tinte-verde);
+      --gm-color: var(--ion-color-success);
 
       &::before {
         background: var(--ion-color-success);
       }
 
-      ion-icon, .num { color: var(--ion-color-success); }
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(58% 130% at 3% 50%, rgba(74, 222, 128, 0.14) 0%, rgba(0, 0, 0, 0) 62%);
+        pointer-events: none;
+      }
+
+      ion-card-content {
+        flex-direction: row;
+        align-items: center;
+        gap: 14px;
+        padding: 18px 16px;
+      }
+
+      .num {
+        font-size: 29px;
+      }
+
+      .lbl {
+        margin-left: auto;
+        max-width: 46%;
+        text-align: right;
+      }
     }
   }
 
-  /* ---------- Progreso ---------- */
+  /* ---------- Progreso de socios al día ---------- */
   .progreso {
-    padding: 8px 16px 4px;
+    padding: 16px 16px 4px;
 
     .barra {
-      height: 8px;
-      border-radius: 4px;
-      background: var(--gm-card-bg);
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--gm-card-border);
       overflow: hidden;
     }
 
     .relleno {
       height: 100%;
-      background: var(--ion-color-success);
-      transition: width 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+      border-radius: 999px;
+      background: linear-gradient(90deg, #22c55e 0%, var(--ion-color-success) 100%);
+      box-shadow: 0 0 18px -2px rgba(74, 222, 128, 0.7);
+      transition: width 0.7s var(--gm-ease);
     }
 
     span {
       display: block;
-      margin-top: 8px;
+      margin-top: 10px;
       font-size: 12.5px;
       font-weight: 500;
-      color: var(--gm-texto-suave);
       text-align: center;
+      color: var(--gm-texto-suave);
     }
   }
 
-  /* ---------- Secciones de listado ---------- */
+  /* ---------- Títulos de sección ---------- */
   .titulo {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin: 20px 16px 4px;
-    font-size: 12.5px;
+    margin: 22px 16px 8px;
+    font-size: 11.5px;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     color: var(--gm-texto-suave);
 
     &::after {
       content: '';
       flex: 1;
       height: 1px;
-      background: var(--gm-card-border);
+      background: linear-gradient(90deg, var(--gm-card-border), rgba(0, 0, 0, 0));
     }
-  }
-
-  ion-list[inset] ion-item {
-    --padding-start: 14px;
-    --min-height: 52px;
   }
 
   /* ---------- Socios de baja ---------- */
   ion-item.item-baja {
-    --background: var(--gm-card-bg);
-    opacity: 0.7;
+    opacity: 0.72;
 
     h2 {
       font-weight: 600;
-      color: var(--gm-texto);
     }
 
     p {
       font-size: 12px;
-      color: var(--gm-texto-suave);
     }
 
     ion-button {
       --border-radius: 10px;
       font-size: 12.5px;
-      text-transform: none;
-    }
-  }
-
-  .vacio {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 64px 24px;
-    color: var(--gm-texto-suave);
-    text-align: center;
-
-    ion-icon {
-      font-size: 48px;
-      margin-bottom: 10px;
-      opacity: 0.5;
     }
   }
 }

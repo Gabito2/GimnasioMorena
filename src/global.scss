@@ -33,167 +33,494 @@
  * La clase se declara en <html> dentro de index.html. */
 
 /* ============================================================
-   Gym Morena — Capa de diseño global (minimalista)
-   Superficies planas, bordes finos, un solo acento: el dorado.
+   Gym Morena — Capa de diseño global · PREMIUM OSCURO
+   Superficies estratificadas + un solo acento dorado.
+   Recursos: hairline sobre cada superficie, sombra de profundidad,
+   degradado muy sutil en las tarjetas y luz dorada sólo donde importa.
+
+   Nota sobre la especificidad: Ionic define los valores por defecto de sus
+   componentes en reglas `:host` / `ion-x` con especificidad (0,1,0)/(0,0,1),
+   y las inyecta en tiempo de ejecución después de esta hoja. Para que estas
+   variables ganen siempre, los bloques de componentes van bajo `:root`
+   (especificidad (0,1,1)). Las reglas de cada página, al llevar el atributo
+   de scope de Angular, siguen ganando por encima de todo esto.
    ============================================================ */
 
-/* ---------- Superficie de fondo ---------- */
-ion-content {
-  --background: var(--gm-bg);
+/* ---------- Base ---------- */
+html {
+  color-scheme: dark;
 }
 
-/* ---------- Tipografía base ---------- */
-ion-content {
-  font-family: var(--ion-font-family);
-  letter-spacing: -0.01em;
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* ---------- Alertas / modales ---------- */
-ion-alert,
-ion-modal,
-ion-action-sheet {
-  --background: var(--ion-overlay-background-color);
-  --color: var(--gm-texto);
+* {
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* ---------- Toolbar / headers ---------- */
-ion-toolbar {
-  --background: var(--gm-bg);
-  --color: var(--gm-texto);
-  --border-width: 0;
-  --min-height: 56px;
+::selection {
+  background: var(--gm-acento-borde);
+  color: #fff;
+}
 
-  ion-title {
-    font-size: 19px;
+:focus-visible {
+  outline: 2px solid var(--gm-acento-borde);
+  outline-offset: 2px;
+}
+
+:root {
+  /* ---------- Contenido: fondo con aura dorada ---------- */
+  ion-content {
+    --background: var(--gm-bg);
+    font-family: var(--ion-font-family);
+    letter-spacing: -0.011em;
+  }
+
+  ion-content::part(background) {
+    background:
+      radial-gradient(125% 66% at 50% -16%, rgba(234, 179, 8, 0.13) 0%, rgba(234, 179, 8, 0) 58%),
+      radial-gradient(85% 55% at 104% 2%, rgba(202, 138, 4, 0.07) 0%, rgba(202, 138, 4, 0) 55%),
+      var(--gm-bg);
+  }
+
+  /* ---------- Toolbar / headers (cristal) ---------- */
+  ion-toolbar {
+    --background: var(--gm-glass);
+    --color: var(--gm-texto);
+    --border-width: 0;
+    --min-height: 58px;
+    backdrop-filter: blur(22px) saturate(150%);
+    -webkit-backdrop-filter: blur(22px) saturate(150%);
+
+    /* hairline inferior que se desvanece en los bordes */
+    &::after {
+      content: '';
+      position: absolute;
+      inset: auto 0 0;
+      height: 1px;
+      background: var(--gm-grad-brillo);
+      pointer-events: none;
+    }
+
+    ion-title {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      padding-inline: 16px;
+    }
+
+    ion-buttons ion-button {
+      --color: var(--gm-texto-suave);
+      font-weight: 600;
+      font-size: 14.5px;
+    }
+  }
+
+  /* ---------- Cards ---------- */
+  ion-card {
+    position: relative;
+    margin: 12px 16px;
+    border-radius: var(--gm-radio-lg);
+    background: var(--gm-grad-card);
+    border: 1px solid var(--gm-card-border);
+    box-shadow: var(--gm-sombra-2);
+    overflow: hidden;
+
+    /* brillo de canto superior: simula luz rozando la superficie */
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 auto;
+      height: 1px;
+      background: var(--gm-grad-brillo);
+      pointer-events: none;
+    }
+  }
+
+  ion-card-header {
+    padding: 16px 16px 6px;
+  }
+
+  ion-card-title {
+    font-size: 16px;
     font-weight: 700;
     letter-spacing: -0.02em;
-  }
-}
-
-/* ---------- Cards ---------- */
-ion-card {
-  margin-inline: 16px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  border-radius: var(--gm-radio-lg);
-  background: var(--gm-card-bg);
-  box-shadow: none;
-  border: 1px solid var(--gm-card-border);
-  overflow: hidden;
-}
-
-/* ---------- Botones ---------- */
-ion-button {
-  --border-radius: 999px;
-  --box-shadow: none;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  text-transform: none;
-
-  &.button-solid {
-    --background: linear-gradient(145deg, var(--ion-color-primary) 0%, var(--ion-color-secondary) 100%);
-    --background-activated: var(--ion-color-secondary);
-    --background-hover: var(--ion-color-secondary);
-    --color: #0a0a0b;
-    --color-activated: #0a0a0b;
-    box-shadow: 0 14px 40px -20px rgba(234, 179, 8, 0.9);
+    color: var(--gm-texto);
   }
 
-  &.button-outline {
-    --border-width: 1px;
-    --border-color: var(--gm-card-border);
+  ion-card-subtitle {
+    margin-top: 4px;
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--gm-texto-suave);
+  }
+
+  ion-card-content {
+    padding: 14px 16px 16px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--gm-texto-suave);
+  }
+
+  /* ---------- Botones ---------- */
+  ion-button {
+    --border-radius: var(--gm-radio);
     --box-shadow: none;
-  }
-
-  &.button-clear {
-    --color: var(--gm-texto-suave);
-  }
-
-  &.button-round {
-    --border-radius: 999px;
-  }
-}
-
-/* ---------- FAB ---------- */
-ion-fab-button {
-  --box-shadow: none;
-  --border-radius: 14px;
-}
-
-/* ---------- Segments (filtros) ---------- */
-ion-segment {
-  --background: transparent;
-}
-
-/* ---------- Searchbar ---------- */
-ion-searchbar {
-  --background: var(--gm-card-bg);
-  --color: var(--gm-texto);
-  --border-radius: 12px;
-  --box-shadow: none;
-  --placeholder-color: var(--gm-texto-suave);
-  --icon-color: var(--gm-texto-suave);
-  --clear-button-color: var(--gm-texto-suave);
-  padding-top: 8px;
-  padding-bottom: 4px;
-}
-
-/* ---------- Items de lista ---------- */
-ion-item {
-  --background: var(--gm-card-bg);
-}
-
-/* ---------- Inputs ---------- */
-ion-input {
-  --color: var(--gm-texto);
-  --placeholder-color: rgba(244, 244, 245, 0.38);
-  --highlight-color-focused: transparent;
-  --highlight-color-valid: transparent;
-  --highlight-color-invalid: transparent;
-}
-
-ion-input .label-text-wrapper .label-text {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--gm-texto-suave);
-  opacity: 0.8;
-}
-
-ion-input.has-focus .label-text-wrapper .label-text,
-ion-input.has-value .label-text-wrapper .label-text {
-  color: var(--ion-color-primary);
-  opacity: 1;
-}
-
-ion-textarea {
-  --color: var(--gm-texto);
-}
-
-ion-list[inset] {
-  margin: 0;
-  border-radius: var(--gm-radio-lg);
-  background: transparent;
-  padding: 4px 0;
-}
-
-/* ---------- Tab bar (footer) ---------- */
-ion-tab-bar {
-  border-top: 1px solid var(--gm-card-border);
-  height: 62px;
-
-  ion-tab-button {
-    --color: var(--gm-texto-suave);
-    --color-selected: var(--ion-color-primary);
-    font-size: 11px;
     font-weight: 600;
+    letter-spacing: -0.005em;
+    text-transform: none;
+    transition: transform var(--gm-trans);
+
+    &:active {
+      transform: scale(0.985);
+    }
+
+    &.button-solid {
+      --background: var(--gm-grad-oro);
+      --background-activated: var(--gm-oro-2);
+      --background-hover: var(--gm-oro-1);
+      --color: #0a0a0b;
+      --color-activated: #0a0a0b;
+      --box-shadow: var(--gm-sombra-oro);
+      font-weight: 700;
+    }
+
+    /* Sólo los botones sin color explícito se neutralizan: los colores
+       semánticos (success/danger/medium) siguen intactos. */
+    &.button-outline:not([color]):not(.ion-color) {
+      --background: rgba(255, 255, 255, 0.035);
+      --background-activated: rgba(255, 255, 255, 0.08);
+      --background-hover: rgba(255, 255, 255, 0.06);
+      --border-width: 1px;
+      --border-color: var(--gm-card-border-2);
+      --color: var(--gm-texto);
+    }
+
+    &.button-clear:not([color]):not(.ion-color) {
+      --color: var(--gm-texto-suave);
+    }
+  }
+
+  /* ---------- FAB ---------- */
+  ion-fab-button {
+    --background: var(--gm-grad-oro);
+    --background-activated: var(--gm-oro-2);
+    --color: #0a0a0b;
+    --border-radius: 16px;
+    --box-shadow: var(--gm-glow-oro);
+  }
+
+  /* ---------- Segments (filtros) ---------- */
+  ion-segment {
+    --background: rgba(255, 255, 255, 0.04);
+    border-radius: var(--gm-radio);
+  }
+
+  ion-segment-button {
+    --color: var(--gm-texto-suave);
+    --color-checked: var(--gm-oro-1);
+    --background-checked: transparent;
+    --border-radius: 11px;
+    --indicator-color: var(--gm-acento-medio);
+    --indicator-height: 100%;
+    --indicator-box-shadow: inset 0 0 0 1px var(--gm-acento-borde), 0 8px 18px -12px rgba(234, 179, 8, 0.5);
+    --indicator-transition: 240ms var(--gm-ease);
+    min-height: 38px;
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: 0;
     text-transform: none;
 
-    ion-icon {
-      font-size: 21px;
-      margin-bottom: 2px;
+    &::part(indicator-background) {
+      border-radius: 11px;
     }
+  }
+
+  /* ---------- Searchbar ---------- */
+  ion-searchbar {
+    --background: rgba(255, 255, 255, 0.04);
+    --color: var(--gm-texto);
+    --border-radius: var(--gm-radio);
+    --box-shadow: inset 0 0 0 1px var(--gm-card-border);
+    --placeholder-color: var(--gm-texto-tenue);
+    --placeholder-opacity: 1;
+    --icon-color: var(--gm-texto-suave);
+    --clear-button-color: var(--gm-texto-suave);
+    padding: 10px 16px 6px;
+
+    &.searchbar-has-focus {
+      --background: var(--gm-acento-suave);
+      --box-shadow: inset 0 0 0 1px var(--gm-acento-borde), 0 0 0 4px rgba(234, 179, 8, 0.1);
+    }
+  }
+
+  /* ---------- Items ---------- */
+  ion-item {
+    --background: var(--ion-item-background);
+    --border-color: var(--gm-card-border);
+    --color: var(--gm-texto);
+    --padding-start: 16px;
+    --inner-padding-end: 16px;
+    --min-height: 56px;
+    --detail-icon-color: var(--gm-texto-tenue);
+    --detail-icon-opacity: 1;
+    font-size: 14.5px;
+  }
+
+  ion-label {
+    h2 {
+      font-weight: 600;
+      font-size: 15.5px;
+      color: var(--gm-texto);
+    }
+
+    p {
+      font-size: 12.5px;
+      color: var(--gm-texto-suave);
+    }
+
+    p ion-icon {
+      vertical-align: -2px;
+    }
+  }
+
+  /* Listas agrupadas: una sola superficie elevada con separadores hairline.
+     Las filas que ya son tarjetas propias (Socios y Pagos) quedan afuera. */
+  ion-list[inset] {
+    margin: 0 16px;
+    padding: 0;
+    border-radius: var(--gm-radio-lg);
+    background: var(--gm-grad-card);
+    border: 1px solid var(--gm-card-border);
+    box-shadow: var(--gm-sombra-2);
+    overflow: hidden;
+    --ion-item-background: transparent;
+
+    ion-item:not(.fila):not(.fila-pago) {
+      --inner-border-width: 0 0 1px 0;
+    }
+
+    ion-item:last-child {
+      --inner-border-width: 0;
+    }
+  }
+
+  ion-avatar,
+  ion-thumbnail {
+    --border-radius: var(--gm-radio);
+  }
+
+  /* ---------- Inputs ---------- */
+  ion-input {
+    --color: var(--gm-texto);
+    --placeholder-color: rgba(247, 247, 248, 0.36);
+    /* Sin línea al pie: el estado lo marca la caja del campo. El color de
+       error sí se conserva porque también pinta el texto de error. */
+    --highlight-height: 0;
+    /* El dorado de estas tres también pinta el cursor de escritura: no pueden
+       quedar translúcidos ni en `transparent`, o el caret desaparece cuando
+       el dato pasa a ser válido. */
+    --highlight-color-focused: var(--gm-oro-1);
+    --highlight-color-valid: var(--gm-oro-1);
+    --highlight-color-invalid: var(--ion-color-danger);
+  }
+
+  /* Etiqueta flotante (labelPlacement="floating"): texto normal en
+     reposo. Ionic la escala a 0.75 al flotar, así que el tamaño de
+     reposo define también el de la etiqueta elevada. */
+  ion-input.input-label-placement-floating .label-text-wrapper .label-text {
+    font-size: 15.5px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    color: var(--gm-texto-suave);
+    opacity: 1;
+  }
+
+  /* Etiqueta apilada (labelPlacement="stacked"): micro-etiqueta. */
+  ion-input.input-label-placement-stacked .label-text-wrapper .label-text {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gm-texto-suave);
+    opacity: 0.8;
+  }
+
+  /* Se enciende en dorado con el foco o con un valor ya cargado… */
+  ion-input.input-label-placement-floating.has-focus .label-text-wrapper .label-text,
+  ion-input.input-label-placement-floating.has-value .label-text-wrapper .label-text,
+  ion-input.input-label-placement-stacked.has-focus .label-text-wrapper .label-text,
+  ion-input.input-label-placement-stacked.has-value .label-text-wrapper .label-text {
+    color: var(--ion-color-primary);
+    opacity: 1;
+  }
+
+  /* …y en rojo cuando el dato quedó inválido (páginas con validación).
+     Va último a propósito: con la misma especificidad, gana el error. */
+  ion-input.ion-touched.ion-invalid .label-text-wrapper .label-text {
+    color: var(--ion-color-danger);
+  }
+
+  ion-textarea {
+    --color: var(--gm-texto);
+  }
+
+  /* ---------- Chips ---------- */
+  ion-chip {
+    --background: var(--gm-tinte-neutro);
+    --color: var(--gm-texto-suave);
+    height: 26px;
+    font-size: 12px;
+    font-weight: 600;
+
+    ion-icon {
+      font-size: 14px;
+    }
+  }
+
+  /* Chips de estado de cuota (compartidos por las páginas) */
+  ion-chip.chip-verde {
+    --background: var(--gm-tinte-verde);
+    --color: var(--ion-color-success);
+  }
+
+  ion-chip.chip-amarillo {
+    --background: var(--gm-tinte-naranja);
+    --color: var(--ion-color-warning);
+  }
+
+  ion-chip.chip-rojo {
+    --background: var(--gm-tinte-rojo);
+    --color: var(--ion-color-danger);
+  }
+
+  /* ---------- Notes y spinners ---------- */
+  ion-note {
+    font-size: 12.5px;
+    color: var(--gm-texto-suave);
+  }
+
+  ion-spinner {
+    --color: var(--gm-oro-1);
+  }
+
+  /* ---------- Overlays: alertas, hojas de acción, toasts y modales ---------- */
+  ion-alert,
+  ion-action-sheet {
+    --background: var(--ion-overlay-background-color);
+    --color: var(--gm-texto);
+  }
+
+  ion-toast {
+    --background: var(--ion-overlay-background-color);
+    --color: var(--gm-texto);
+    --border-radius: var(--gm-radio);
+
+    &::part(container) {
+      border: 1px solid var(--gm-card-border-2);
+      box-shadow: var(--gm-sombra-3);
+    }
+  }
+
+  ion-modal {
+    --background: var(--gm-bg);
+    --border-radius: var(--gm-radio-xl) var(--gm-radio-xl) 0 0;
+    --border-color: var(--gm-card-border-2);
+    --border-width: 1px 1px 0 0;
+
+    &::part(content) {
+      box-shadow: var(--gm-sombra-3);
+    }
+
+    &::part(backdrop) {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    &::part(handle) {
+      width: 42px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+/* ============================================================
+   Utilidades compartidas (clases propias, sin conflicto con Ionic)
+   ============================================================ */
+
+/* Estado vacío */
+.vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+  padding: 64px 24px;
+  color: var(--gm-texto-suave);
+
+  ion-icon {
+    font-size: 46px;
+    margin-bottom: 10px;
+    opacity: 0.45;
+  }
+
+  p {
+    margin: 0 0 12px;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+}
+
+/* Sufijo de unidad dentro de un campo (ej.: "$/mes") */
+.sufijo-monto {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gm-texto-suave);
+  padding-inline-start: 10px;
+}
+
+/* Icono dentro de una "insignia" tintada (cabeceras de tarjeta).
+   El anillo va como box-shadow para que el tamaño no dependa del
+   box-sizing que Ionic define en sus componentes. */
+.gm-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background: var(--gm-grad-oro-suave);
+  box-shadow: inset 0 0 0 1px var(--gm-acento-borde);
+  color: var(--ion-color-primary);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+/* Título de sección: mayúsculas pequeñas + regla que se desvanece */
+.gm-titulo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 22px 16px 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gm-texto-suave);
+
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--gm-card-border), transparent);
   }
 }
 
@@ -201,25 +528,31 @@ ion-tab-bar {
 @keyframes gm-entrar {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(10px) scale(0.995);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
 .gm-animar {
-  animation: gm-entrar 0.35s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation: gm-entrar 0.38s var(--gm-ease) both;
 }
 
 /* Escalonado suave para listas */
 .gm-animar:nth-child(1) { animation-delay: 0.02s; }
-.gm-animar:nth-child(2) { animation-delay: 0.05s; }
-.gm-animar:nth-child(3) { animation-delay: 0.08s; }
-.gm-animar:nth-child(4) { animation-delay: 0.11s; }
-.gm-animar:nth-child(5) { animation-delay: 0.14s; }
-.gm-animar:nth-child(6) { animation-delay: 0.17s; }
+.gm-animar:nth-child(2) { animation-delay: 0.06s; }
+.gm-animar:nth-child(3) { animation-delay: 0.1s; }
+.gm-animar:nth-child(4) { animation-delay: 0.14s; }
+.gm-animar:nth-child(5) { animation-delay: 0.18s; }
+.gm-animar:nth-child(6) { animation-delay: 0.22s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .gm-animar {
+    animation: none;
+  }
+}
 
 /* ---------- Scrollbar discreta (web) ---------- */
 ion-content::-webkit-scrollbar {

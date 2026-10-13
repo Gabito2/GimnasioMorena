@@ -2,9 +2,10 @@
 // https://ionicframework.com/docs/theming/
 
 /**
- * Gym Morena — Tema institucional OSCURO · MINIMALISTA
- * Superficies planas casi negras + acento dorado. Sin gradientes ni brillos:
- * la jerarquía la construyen el contraste, el espacio y el borde fino.
+ * Gym Morena — Tema institucional OSCURO · PREMIUM
+ * Base casi negra con superficies estratificadas + acento dorado.
+ * La jerarquía la construyen el contraste, el espacio, la luz (glow suave)
+ * y el borde fino (hairline). Sin ruido: un solo acento, el dorado.
  */
 :root {
   /* ---------- Color: institucional (dorado) ---------- */
@@ -93,38 +94,75 @@
   --ion-background-color-step-900: #e6e6e6;
   --ion-background-color-step-950: #f2f2f2;
 
-  /* ---------- Superficies (siempre oscuras, planas) ---------- */
-  --ion-text-color: #f4f4f5;
-  --ion-text-color-rgb: 244, 244, 245;
-  --ion-background-color: #0a0a0b;
-  --ion-background-color-rgb: 10, 10, 11;
-  --ion-card-background: #141416;
-  --ion-item-background: #141416;
-  --ion-toolbar-background: #0a0a0b;
-  --ion-tab-bar-background: #0c0c0e;
-  --ion-overlay-background-color: #141416;
-  --ion-border-color: rgba(244, 244, 245, 0.08);
+  /* ---------- Superficies (siempre oscuras, estratificadas) ---------- */
+  --ion-text-color: #f7f7f8;
+  --ion-text-color-rgb: 247, 247, 248;
+  --ion-background-color: #08080a;
+  --ion-background-color-rgb: 8, 8, 10;
+  --ion-card-background: #121216;
+  --ion-item-background: #121216;
+  --ion-toolbar-background: transparent;
+  --ion-tab-bar-background: rgba(10, 10, 13, 0.86);
+  --ion-overlay-background-color: #16161b;
+  --ion-border-color: rgba(255, 255, 255, 0.07);
 
   /* ---------- Tipografía ---------- */
   --ion-font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
-  /* ---------- Tokens de diseño ---------- */
-  /* Superficies */
-  --gm-bg: #0a0a0b;
-  --gm-card-bg: #141416;
-  --gm-card-border: rgba(244, 244, 245, 0.08);
-  --gm-tab-bg: #0c0c0e;
+  /* ============================================================
+     Tokens de diseño Gym Morena
+     ============================================================ */
 
-  /* Acento dorado plano (tinte + borde para estados activos) */
-  --gm-acento-suave: rgba(234, 179, 8, 0.09);
-  --gm-acento-borde: rgba(234, 179, 8, 0.32);
+  /* --- Superficies --- */
+  --gm-bg: #08080a;
+  --gm-bg-2: #0e0e12;
+  --gm-card-bg: #121216;
+  --gm-card-bg-2: #17171d;
+  --gm-glass: rgba(12, 12, 16, 0.72);
+  --gm-card-border: rgba(255, 255, 255, 0.07);
+  --gm-card-border-2: rgba(255, 255, 255, 0.13);
 
-  /* Radios */
-  --gm-radio: 12px;
-  --gm-radio-lg: 16px;
+  /* --- Dorado: tintes, degradados y luz --- */
+  --gm-oro-1: #f7d33c;
+  --gm-oro-2: #eab308;
+  --gm-oro-3: #c08407;
+  --gm-acento-suave: rgba(234, 179, 8, 0.1);
+  --gm-acento-medio: rgba(234, 179, 8, 0.18);
+  --gm-acento-borde: rgba(234, 179, 8, 0.3);
 
-  /* Texto */
-  --gm-texto: #f4f4f5;
-  --gm-texto-suave: #8b8d98;
+  --gm-grad-oro: linear-gradient(135deg, #f7d33c 0%, #eab308 46%, #c08407 100%);
+  --gm-grad-oro-suave: linear-gradient(140deg, rgba(234, 179, 8, 0.18) 0%, rgba(234, 179, 8, 0.05) 100%);
+  --gm-grad-card: linear-gradient(163deg, #1a1a20 0%, #141419 46%, #101014 100%);
+  --gm-grad-brillo: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.14) 22%, rgba(255, 255, 255, 0.14) 78%, transparent);
+  /* Alias histórico */
+  --gm-gradiente: var(--gm-grad-oro);
+
+  /* --- Luz y elevación --- */
+  --gm-sombra-1: 0 1px 2px rgba(0, 0, 0, 0.5), 0 6px 16px -12px rgba(0, 0, 0, 0.7);
+  --gm-sombra-2: 0 1px 2px rgba(0, 0, 0, 0.55), 0 20px 44px -28px rgba(0, 0, 0, 0.95);
+  --gm-sombra-3: 0 2px 4px rgba(0, 0, 0, 0.5), 0 32px 64px -36px rgba(0, 0, 0, 1);
+  --gm-sombra-oro: 0 10px 30px -14px rgba(234, 179, 8, 0.55);
+  --gm-glow-oro: 0 0 0 1px rgba(234, 179, 8, 0.26), 0 14px 34px -16px rgba(234, 179, 8, 0.6);
+  --gm-anillo-oro: 0 0 0 4px rgba(234, 179, 8, 0.12);
+
+  /* --- Tintes semánticos (chips, badges, estados) --- */
+  --gm-tinte-verde: rgba(74, 222, 128, 0.12);
+  --gm-tinte-naranja: rgba(251, 146, 60, 0.13);
+  --gm-tinte-rojo: rgba(248, 113, 113, 0.12);
+  --gm-tinte-neutro: rgba(255, 255, 255, 0.05);
+
+  /* --- Radios --- */
+  --gm-radio: 14px;
+  --gm-radio-lg: 20px;
+  --gm-radio-xl: 26px;
+
+  /* --- Texto --- */
+  --gm-texto: #f7f7f8;
+  --gm-texto-suave: #a0a0ab;
+  --gm-texto-tenue: #6d6d78;
   --gm-texto-invertido: #0a0a0b;
+
+  /* --- Movimiento --- */
+  --gm-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --gm-trans: 200ms var(--gm-ease);
 }

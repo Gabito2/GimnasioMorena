@@ -2,123 +2,104 @@
    portaliza fuera del componente, y Angular scopea estas reglas por atributo
    (_ngcontent), por lo que siguen siendo propias de esta página. */
 
+/* ---------- Cabecera: búsqueda + filtros ---------- */
 ion-searchbar {
   padding-bottom: 0;
 }
 
 ion-segment {
-  margin: 0 auto 8px;
+  margin: 2px auto 10px;
   max-width: 640px;
-  border-radius: 12px;
 }
 
-ion-segment-button {
-  --indicator-color: var(--gm-acento-suave);
-  --color: var(--gm-texto-suave);
-  --color-checked: var(--ion-color-primary);
-  --border-radius: 10px;
-  min-height: 34px;
-  font-size: 13px;
-  font-weight: 600;
-  text-transform: none;
-  letter-spacing: 0;
+/* El listado son tarjetas sueltas: sólo la lista principal (hija directa del
+   contenido) pierde la superficie agrupada; las del modal la conservan. */
+ion-content > ion-list[inset] {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
 }
 
-.vacio {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 64px 24px;
-  color: var(--gm-texto-suave);
-
-  ion-icon {
-    font-size: 48px;
-    margin-bottom: 12px;
-    opacity: 0.5;
-  }
-}
-
-/* ---------- Filas de socios ---------- */
+/* ---------- Fila de socio (tarjeta) ---------- */
 ion-item.fila {
-  --background: var(--gm-card-bg);
+  --background: var(--gm-grad-card);
+  --border-radius: var(--gm-radio-lg);
   --padding-start: 12px;
-  --padding-end: 8px;
-  --min-height: 72px;
-  --inner-padding-end: 4px;
+  --padding-end: 4px;
+  --inner-padding-end: 2px;
+  --min-height: 78px;
+  margin: 10px 16px;
   border-radius: var(--gm-radio-lg);
-  margin: 8px 16px;
   border: 1px solid var(--gm-card-border);
+  box-shadow: var(--gm-sombra-1);
+  overflow: hidden;
+  transition: transform var(--gm-trans), border-color var(--gm-trans), box-shadow var(--gm-trans);
 
+  &:active {
+    transform: scale(0.99);
+    border-color: var(--gm-card-border-2);
+  }
+
+  /* barra de estado a la izquierda, con un halo de su propio color */
   .barra {
     width: 3px;
-    height: 44px;
-    border-radius: 2px;
+    height: 46px;
     margin-right: 10px;
     flex-shrink: 0;
+    border-radius: 999px;
   }
 
-  &.estado-verde .barra { background: var(--ion-color-success); }
-  &.estado-amarillo .barra { background: var(--ion-color-warning); }
-  &.estado-rojo .barra { background: var(--ion-color-danger); }
+  &.estado-verde .barra {
+    background: var(--ion-color-success);
+    box-shadow: 0 0 14px -1px rgba(74, 222, 128, 0.6);
+  }
+
+  &.estado-amarillo .barra {
+    background: var(--ion-color-warning);
+    box-shadow: 0 0 14px -1px rgba(251, 146, 60, 0.6);
+  }
+
+  &.estado-rojo .barra {
+    background: var(--ion-color-danger);
+    box-shadow: 0 0 14px -1px rgba(248, 113, 113, 0.6);
+  }
 }
 
+/* ---------- Iniciales del socio ---------- */
 .inicial {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: var(--gm-acento-suave);
+  width: 46px;
+  height: 46px;
+  border-radius: var(--gm-radio);
+  background: var(--gm-grad-oro-suave), var(--gm-card-bg-2);
   border: 1px solid var(--gm-acento-borde);
   color: var(--ion-color-primary);
   font-weight: 700;
 
   span {
     font-size: 15px;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.01em;
   }
 }
 
 ion-label {
   h2 {
-    font-weight: 600;
     font-size: 15.5px;
-    color: var(--gm-texto);
   }
 
   p {
-    color: var(--gm-texto-suave);
     font-size: 12.5px;
   }
 }
 
 ion-chip {
-  margin: 6px 0 0;
-  height: 24px;
-  font-weight: 600;
-
-  &.chip-verde {
-    background: rgba(var(--ion-color-success-rgb), 0.12);
-    color: var(--ion-color-success);
-  }
-  &.chip-amarillo {
-    background: rgba(var(--ion-color-warning-rgb), 0.14);
-    color: var(--ion-color-warning);
-  }
-  &.chip-rojo {
-    background: rgba(var(--ion-color-danger-rgb), 0.12);
-    color: var(--ion-color-danger);
-  }
-
-  ion-icon {
-    font-size: 14px;
-  }
-}
-
-ion-label p ion-icon {
-  vertical-align: -2px;
+  margin: 7px 0 0;
 }
 
 /* Check verde junto al nombre si pagó el mes */
@@ -126,41 +107,46 @@ ion-label p ion-icon {
   color: var(--ion-color-success);
   font-size: 16px;
   vertical-align: -3px;
-  margin-left: 4px;
+  margin-left: 5px;
 }
 
-/* ---------- Modal de detalle del socio ---------- */
+/* ---------- Ficha del socio (modal) ---------- */
 .ficha {
-  padding-bottom: 24px;
+  padding-bottom: 20px;
+}
+
+/* cabecera de perfil: fondo transparente + separador hairline */
+.ficha > ion-item {
+  --background: transparent;
+  --min-height: 82px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--gm-card-border);
 }
 
 .inicial.grande {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
 
   span {
     font-size: 19px;
   }
 }
 
-.sufijo-monto {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--gm-texto-suave);
-  margin-left: 8px;
-}
-
 .error-edicion {
   display: block;
+  margin: 0 16px 8px;
   font-size: 12.5px;
   font-weight: 500;
-  margin: 0 16px 8px;
 }
 
 .acciones-detalle {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 4px 16px 16px;
+  gap: 9px;
+  padding: 10px 16px 20px;
+
+  ion-button {
+    margin: 0;
+  }
 }

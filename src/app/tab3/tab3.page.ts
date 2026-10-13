@@ -1,13 +1,16 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent,
-  IonList, IonItem, IonInput, IonButton, IonNote, IonIcon, IonText, IonSpinner,
+  IonHeader, IonToolbar, IonTitle, IonContent,
+  IonItem, IonInput, IonButton, IonIcon, IonSpinner,
 } from '@ionic/angular';
 import { ReactiveFormsModule, NonNullableFormBuilder, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { personOutline, callOutline, cashOutline, calendarOutline, saveOutline, personAddOutline, idCardOutline, walletOutline } from 'ionicons/icons';
+import {
+  personOutline, cashOutline, calendarOutline, saveOutline, personAddOutline,
+  logoWhatsapp, checkmarkCircle, closeCircle,
+} from 'ionicons/icons';
 import { GymService } from '../services/gym.service';
 
 @Component({
@@ -16,8 +19,8 @@ import { GymService } from '../services/gym.service';
   styleUrls: ['tab3.page.scss'],
   imports: [
     ReactiveFormsModule,
-    IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent,
-    IonItem, IonInput, IonButton, IonNote, IonIcon, IonText, IonSpinner,
+    IonHeader, IonToolbar, IonTitle, IonContent,
+    IonItem, IonInput, IonButton, IonIcon, IonSpinner,
   ],
 })
 export class Tab3Page {
@@ -50,7 +53,10 @@ export class Tab3Page {
   });
 
   constructor() {
-    addIcons({ personOutline, callOutline, cashOutline, calendarOutline, saveOutline, personAddOutline, idCardOutline, walletOutline });
+    addIcons({
+      personOutline, cashOutline, calendarOutline, saveOutline, personAddOutline,
+      logoWhatsapp, checkmarkCircle, closeCircle,
+    });
   }
   /** Atajo para los montos frecuentes. Tocar de nuevo deselecciona. */
   setMonto(monto: number): void {
@@ -61,6 +67,16 @@ export class Tab3Page {
     this.montoSeleccionado.set(monto);
     this.form.controls.montoCuota.setValue(monto);
     this.form.controls.montoCuota.markAsTouched();
+  }
+
+  /** Botón de borrado del campo Nombre (aparece mientras se escribe). */
+  limpiarNombre(): void {
+    this.form.controls.nombre.setValue('');
+  }
+
+  /** Botón de borrado del campo WhatsApp. */
+  limpiarTelefono(): void {
+    this.form.controls.telefono.setValue('');
   }
 
   cancelar(): void {
@@ -95,7 +111,7 @@ export class Tab3Page {
     });
 
     const toast = await this.toastCtrl.create({
-      message: `${v.nombre.trim()} registrado. Cuota vence el ${this.formatear(fechaVencimiento)}`,
+      message: `${v.nombre.trim()} registrado. Cuota vence el ${this.formatearPreview(fechaVencimiento)}`,
       duration: 2600,
       color: 'success',
       position: 'top',
@@ -113,12 +129,8 @@ export class Tab3Page {
     void this.router.navigate(['/tabs/tab2']);
   }
 
+  /** Fecha ISO (yyyy-MM-dd) en formato corto dd/mm/aaaa. */
   formatearPreview(iso: string): string {
-    const [y, m, d] = iso.split('-');
-    return `${d}/${m}/${y}`;
-  }
-
-  private formatear(iso: string): string {
     const [y, m, d] = iso.split('-');
     return `${d}/${m}/${y}`;
   }
