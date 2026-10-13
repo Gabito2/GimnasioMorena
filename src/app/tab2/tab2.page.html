@@ -33,44 +33,68 @@
       }
     </div>
   } @else {
-    <ion-list inset>
+    <div class="grid-socios">
       @for (p of filtrados(); track p.id) {
-        <ion-item class="fila" [class]="'estado-' + claseEstado[p.estado]" (click)="seleccionar(p)" button detail>
-          <div class="barra" slot="start"></div>
-          <ion-avatar slot="start" class="inicial">
-            <span>{{ p.nombre.charAt(0) }}{{ p.nombre.trim().split(/\s+/).slice(-1)[0].charAt(0) }}</span>
-          </ion-avatar>
-          <ion-label>
-            <h2>
+        <button
+          type="button"
+          class="gm-animar tarjeta-socio"
+          [class.estado-verde]="claseEstado[p.estado] === 'verde'"
+          [class.estado-amarillo]="claseEstado[p.estado] === 'amarillo'"
+          [class.estado-rojo]="claseEstado[p.estado] === 'rojo'"
+          (click)="seleccionar(p)"
+          [attr.aria-label]="p.nombre + ', ' + p.estadoTexto"
+        >
+          <!-- Barra de estado lateral -->
+          <span class="barra" [class]="'barra-' + claseEstado[p.estado]" aria-hidden="true"></span>
+
+          <!-- Avatar de iniciales -->
+          <span class="avatar" aria-hidden="true">
+            {{ p.nombre.charAt(0) }}{{ p.nombre.trim().split(/\s+/).slice(-1)[0].charAt(0) }}
+          </span>
+
+          <!-- cuerpo -->
+          <span class="cuerpo">
+            <span class="nombre">
               {{ p.nombre }}
               @if (p.pagoMes) {
-                <ion-icon class="pagado-check" name="checkmark-done-outline" aria-label="Cuota del mes pagada"></ion-icon>
+                <ion-icon class="check-mes" name="checkmark-done-outline" aria-label="Cuota del mes pagada"></ion-icon>
               }
-            </h2>
-            <p>
-              Vence: {{ formatearFecha(p.fechaVencimiento) }}
+            </span>
+            <span class="linea">
               @if (p.telefono) {
-                · <ion-icon name="call-outline"></ion-icon> {{ p.telefono }}
+                <ion-icon name="call-outline" aria-hidden="true"></ion-icon>
+                <span>{{ p.telefono }}</span>
+              } @else {
+                <span class="desconocido">Sin teléfono</span>
               }
-            </p>
-            <ion-chip [class]="'chip-' + claseEstado[p.estado]" (click)="cambiarFiltroDesdeChip(p.estado); $event.stopPropagation()">
-              <ion-icon name="{{ iconoEstado[p.estado] }}"></ion-icon>
-              <ion-label>{{ p.estadoTexto }}</ion-label>
-            </ion-chip>
-          </ion-label>
-          @if (p.telefono) {
-            <ion-button
-              slot="end"
-              fill="clear"
-              (click)="enviarRecordatorio(p); $event.stopPropagation()"
-              aria-label="Enviar recordatorio por WhatsApp"
-            >
-              <ion-icon slot="icon-only" name="logo-whatsapp" color="success"></ion-icon>
-            </ion-button>
-          }
-        </ion-item>
+              <span class="sep" aria-hidden="true">·</span>
+              <span class="vence">
+                <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>
+                <span>Vence {{ formatearFecha(p.fechaVencimiento) }}</span>
+              </span>
+            </span>
+          </span>
+
+          <!-- chip de estado + acción WhatsApp -->
+          <span class="pie">
+            <span class="chip" [class]="'chip-' + claseEstado[p.estado]" (click)="cambiarFiltroDesdeChip(p.estado); $event.stopPropagation()">
+              <ion-icon [name]="iconoEstado[p.estado]" aria-hidden="true"></ion-icon>
+              {{ p.estadoTexto }}
+            </span>
+            @if (p.telefono) {
+              <button
+                class="whatsapp"
+                type="button"
+                (click)="enviarRecordatorio(p); $event.stopPropagation()"
+                aria-label="Enviar recordatorio por WhatsApp"
+              >
+                <ion-icon name="logo-whatsapp" aria-hidden="true"></ion-icon>
+              </button>
+            }
+          </span>
+        </button>
       }
-    </ion-list>
+    </div>
   }
 
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
@@ -95,143 +119,172 @@
           @if (!editando()) {
             <!-- ---------- Vista ficha ---------- -->
             <div class="ficha">
-              <ion-item lines="none">
-                <ion-avatar slot="start" class="inicial grande">
-                  <span>{{ s.nombre.charAt(0) }}{{ s.nombre.trim().split(/\s+/).slice(-1)[0].charAt(0) }}</span>
-                </ion-avatar>
-                <ion-label>
-                  <h2>{{ s.nombre }}</h2>
-                  <p>
+              <div class="ficha-cabecera">
+                <span class="avatar grande" aria-hidden="true">
+                  {{ s.nombre.charAt(0) }}{{ s.nombre.trim().split(/\s+/).slice(-1)[0].charAt(0) }}
+                </span>
+                <div class="ficha-datos">
+                  <h1 class="ficha-nombre">{{ s.nombre }}</h1>
+                  <p class="ficha-telefono">
                     @if (s.telefono) {
-                      <ion-icon name="call-outline"></ion-icon> {{ s.telefono }}
+                      <ion-icon name="call-outline" aria-hidden="true"></ion-icon>
+                      <span>{{ s.telefono }}</span>
                     } @else {
-                      Sin teléfono registrado
+                      <span class="sin-dato">Sin teléfono registrado</span>
                     }
                   </p>
-                </ion-label>
-                <ion-chip slot="end" [class]="'chip-' + claseEstado[s.estado]">
-                  <ion-icon name="{{ iconoEstado[s.estado] }}"></ion-icon>
-                  <ion-label>{{ s.estadoTexto }}</ion-label>
-                </ion-chip>
-              </ion-item>
+                </div>
+                <span class="chip" [class]="'chip-' + claseEstado[s.estado]">
+                  <ion-icon [name]="iconoEstado[s.estado]" aria-hidden="true"></ion-icon>
+                  {{ s.estadoTexto }}
+                </span>
+              </div>
 
-              <ion-list inset>
-                <ion-item>
-                  <ion-icon name="calendar-clear-outline" slot="start" color="primary"></ion-icon>
-                  <ion-label>
-                    <h2>Cuota vigente</h2>
-                    <p>Vence el {{ formatearFecha(s.fechaVencimiento) }}</p>
-                  </ion-label>
-                </ion-item>
-                <ion-item>
-                  <ion-icon name="cash-outline" slot="start" color="primary"></ion-icon>
-                  <ion-label>
-                    <h2>{{ formatearMonto(s.montoCuota) }} / mes</h2>
-                    <p>{{ s.pagosAnio }} {{ s.pagosAnio === 1 ? 'pago' : 'pagos' }} registrados este año</p>
-                  </ion-label>
-                </ion-item>
-                <ion-item>
-                  <ion-icon name="wallet-outline" slot="start" color="primary"></ion-icon>
-                  <ion-label>
-                    <h2>Últimos pagos</h2>
+              <div class="bloques">
+                <div class="bloque">
+                  <div class="bloque-cabecera">
+                    <ion-icon name="calendar-clear-outline" aria-hidden="true"></ion-icon>
+                    <span class="bloque-titulo">Cuota vigente</span>
+                  </div>
+                  <div class="bloque-relleno">
+                    <span class="bloque-valor">
+                      {{ formatearFecha(s.fechaVencimiento) }}
+                    </span>
+                    <span class="bloque-label">Fecha de vencimiento</span>
+                  </div>
+                </div>
+
+                <div class="bloque">
+                  <div class="bloque-cabecera">
+                    <ion-icon name="cash-outline" aria-hidden="true"></ion-icon>
+                    <span class="bloque-titulo">Monto de la cuota</span>
+                  </div>
+                  <div class="bloque-relleno">
+                    <span class="bloque-valor monto">
+                      {{ formatearMonto(s.montoCuota) }}
+                      <span class="sufijo">/mes</span>
+                    </span>
+                    <span class="bloque-label">
+                      {{ s.pagosAnio }} {{ s.pagosAnio === 1 ? 'pago' : 'pagos' }} este año
+                    </span>
+                  </div>
+                </div>
+
+                <div class="bloque">
+                  <div class="bloque-cabecera">
+                    <ion-icon name="wallet-outline" aria-hidden="true"></ion-icon>
+                    <span class="bloque-titulo">Últimos pagos</span>
+                  </div>
+                  <div class="bloque-relleno">
                     @if (s.mesesPagados.length === 0) {
-                      <p>Todavía no tiene pagos registrados</p>
+                      <span class="sin-dato">Todavía no tiene pagos registrados</span>
+                    } @else {
+                      <span class="bloque-valor">{{ s.mesesPagados.slice(0, 6).join(' · ') }}</span>
+                      <span class="bloque-label">Mes/año</span>
                     }
-                    @else {
-                      <p>{{ s.mesesPagados.slice(0, 6).join(' · ') }}</p>
-                    }
-                  </ion-label>
-                  <ion-note slot="end" color="medium">Mes/año</ion-note>
-                </ion-item>
-              </ion-list>
+                  </div>
+                </div>
+              </div>
 
               <!-- Acciones -->
               <div class="acciones-detalle">
-                <ion-button expand="block" (click)="empezarEditar()">
-                  <ion-icon slot="start" name="create-outline"></ion-icon>
-                  Modificar datos
-                </ion-button>
+                <button type="button" class="accion primaria" (click)="empezarEditar()">
+                  <ion-icon name="create-outline" aria-hidden="true"></ion-icon>
+                  <span>Modificar datos</span>
+                </button>
                 @if (s.telefono) {
-                  <ion-button expand="block" fill="outline" color="success" (click)="enviarRecordatorio(s)">
-                    <ion-icon slot="start" name="logo-whatsapp"></ion-icon>
-                    Mandar mensaje por WhatsApp
-                  </ion-button>
+                  <button type="button" class="accion outline success" (click)="enviarRecordatorio(s)">
+                    <ion-icon name="logo-whatsapp" aria-hidden="true"></ion-icon>
+                    <span>Mandar mensaje por WhatsApp</span>
+                  </button>
                 }
-                <ion-button expand="block" fill="outline" color="danger" (click)="pedirEliminar(s)">
-                  <ion-icon slot="start" name="trash-outline"></ion-icon>
-                  Eliminar socio
-                </ion-button>
+                <button type="button" class="accion outline danger" (click)="pedirEliminar(s)">
+                  <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
+                  <span>Eliminar socio</span>
+                </button>
               </div>
             </div>
           } @else {
             <!-- ---------- Vista edición ---------- -->
-            <ion-list inset>
-              <ion-item>
-                <ion-icon name="person-outline" slot="start" color="primary"></ion-icon>
-                <ion-input
-                  label="Nombre completo"
-                  labelPlacement="floating"
-                  [value]="nombreEdit()"
-                  (ionInput)="nombreEdit.set($event.detail.value ?? '')"
-                ></ion-input>
-              </ion-item>
-              <ion-item>
-                <ion-icon name="call-outline" slot="start" color="primary"></ion-icon>
-                <ion-input
-                  type="tel"
-                  label="Teléfono / WhatsApp"
-                  labelPlacement="floating"
-                  placeholder="351 555 1234"
-                  [value]="telefonoEdit()"
-                  (ionInput)="telefonoEdit.set($event.detail.value ?? '')"
-                ></ion-input>
-              </ion-item>
-              <ion-item>
-                <ion-icon name="cash-outline" slot="start" color="primary"></ion-icon>
-                <ion-input
-                  type="number"
-                  inputmode="numeric"
-                  min="0"
-                  label="Monto de la cuota"
-                  labelPlacement="floating"
-                  [value]="montoEdit()"
-                  (ionInput)="montoEdit.set($event.detail.value ?? '')"
-                >
-                  <ion-text slot="end" class="sufijo-monto">$/mes</ion-text>
-                </ion-input>
-              </ion-item>
-              <ion-item>
-                <ion-icon name="calendar-outline" slot="start" color="primary"></ion-icon>
-                <ion-input
-                  type="date"
-                  label="Fecha de ingreso"
-                  labelPlacement="floating"
-                  [value]="fechaIngresoEdit()"
-                  (ionInput)="fechaIngresoEdit.set($event.detail.value ?? '')"
-                ></ion-input>
-              </ion-item>
-              <ion-item>
-                <ion-icon name="calendar-clear-outline" slot="start" color="primary"></ion-icon>
-                <ion-input
-                  type="date"
-                  label="Fecha de vencimiento"
-                  labelPlacement="floating"
-                  [value]="fechaVencimientoEdit()"
-                  (ionInput)="fechaVencimientoEdit.set($event.detail.value ?? '')"
-                ></ion-input>
-              </ion-item>
-            </ion-list>
-            @if (errorEdicion()) {
-              <ion-note class="error-edicion" color="danger">{{ errorEdicion() }}</ion-note>
-            }
-            <div class="acciones-detalle">
-              <ion-button expand="block" (click)="guardarEdicion()">
-                <ion-icon slot="start" name="checkmark-outline"></ion-icon>
-                Guardar cambios
-              </ion-button>
-              <ion-button expand="block" fill="clear" color="medium" (click)="cancelarEditar()">
-                Cancelar
-              </ion-button>
+            <div class="editor">
+              <div class="editor-cabecera">
+                <span class="avatar" aria-hidden="true">
+                  {{ s.nombre.charAt(0) }}{{ s.nombre.trim().split(/\s+/).slice(-1)[0].charAt(0) }}
+                </span>
+                <div class="editor-meta">
+                  <h2 class="editor-titulo">Editar socio</h2>
+                  <p class="editor-sub">Actualizá los datos de {{ s.nombre }}</p>
+                </div>
+              </div>
+
+              <ion-list>
+                <ion-item class="campo">
+                  <ion-icon name="person-outline" slot="start" color="primary" aria-hidden="true"></ion-icon>
+                  <ion-input
+                    label="Nombre completo"
+                    labelPlacement="floating"
+                    [value]="nombreEdit()"
+                    (ionInput)="nombreEdit.set($event.detail.value ?? '')"
+                  ></ion-input>
+                </ion-item>
+                <ion-item class="campo">
+                  <ion-icon name="call-outline" slot="start" color="primary" aria-hidden="true"></ion-icon>
+                  <ion-input
+                    type="tel"
+                    label="Teléfono / WhatsApp"
+                    labelPlacement="floating"
+                    placeholder="351 555 1234"
+                    [value]="telefonoEdit()"
+                    (ionInput)="telefonoEdit.set($event.detail.value ?? '')"
+                  ></ion-input>
+                </ion-item>
+                <ion-item class="campo">
+                  <ion-icon name="cash-outline" slot="start" color="primary" aria-hidden="true"></ion-icon>
+                  <ion-input
+                    type="number"
+                    inputmode="numeric"
+                    min="0"
+                    label="Monto de la cuota"
+                    labelPlacement="floating"
+                    [value]="montoEdit()"
+                    (ionInput)="montoEdit.set($event.detail.value ?? '')"
+                  >
+                    <ion-text slot="end" class="sufijo-monto">$/mes</ion-text>
+                  </ion-input>
+                </ion-item>
+                <ion-item class="campo">
+                  <ion-icon name="calendar-outline" slot="start" color="primary" aria-hidden="true"></ion-icon>
+                  <ion-input
+                    type="date"
+                    label="Fecha de ingreso"
+                    labelPlacement="floating"
+                    [value]="fechaIngresoEdit()"
+                    (ionInput)="fechaIngresoEdit.set($event.detail.value ?? '')"
+                  ></ion-input>
+                </ion-item>
+                <ion-item class="campo">
+                  <ion-icon name="calendar-clear-outline" slot="start" color="primary" aria-hidden="true"></ion-icon>
+                  <ion-input
+                    type="date"
+                    label="Fecha de vencimiento"
+                    labelPlacement="floating"
+                    [value]="fechaVencimientoEdit()"
+                    (ionInput)="fechaVencimientoEdit.set($event.detail.value ?? '')"
+                  ></ion-input>
+                </ion-item>
+              </ion-list>
+              @if (errorEdicion()) {
+                <p class="error-edicion" color="danger">{{ errorEdicion() }}</p>
+              }
+              <div class="acciones-detalle">
+                <button type="button" class="accion primaria" (click)="guardarEdicion()">
+                  <ion-icon name="checkmark-outline" aria-hidden="true"></ion-icon>
+                  <span>Guardar cambios</span>
+                </button>
+                <button type="button" class="accion outline" (click)="cancelarEditar()">
+                  Cancelar
+                </button>
+              </div>
             </div>
           }
         </ion-content>

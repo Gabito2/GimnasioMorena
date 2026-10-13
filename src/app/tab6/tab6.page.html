@@ -18,21 +18,54 @@
       <p>No hay socios cargados todavía.</p>
     </div>
   } @else {
-    <ion-list inset>
+    <div class="grid-socios">
       @for (p of listaSocios(); track p.id) {
-        <ion-item class="fila-pago" (click)="seleccionar(p.id)" button detail>
-          <ion-icon
-            name="{{ p.pagoMesActual ? 'checkmark-circle' : 'wallet-outline' }}"
-            slot="start"
-            [color]="p.pagoMesActual ? 'success' : 'medium'"
-          ></ion-icon>
-          <ion-label>
-            <h2>{{ p.nombre }} @if (p.activo === false) { <ion-chip color="medium" class="chip-baja">De baja</ion-chip> }</h2>
-            <p>{{ textoUltimoPago(p) }}</p>
-          </ion-label>
-        </ion-item>
+        <button
+          type="button"
+          class="gm-animar tarjeta-socio"
+          [class.estado-verde]="p.pagoMesActual"
+          [class.estado-amarillo]="!p.pagoMesActual && p.pagoAnioVisto"
+          [class.estado-rojo]="!p.pagoAnioVisto"
+          (click)="seleccionar(p.id)"
+          [attr.aria-label]="p.nombre + ', ' + (p.pagoMesActual ? 'al día' : (p.pagoAnioVisto ? 'sin pagar este mes' : 'sin pagos este año'))"
+        >
+          <!-- indicador de estado por encima del borde superior derecho -->
+          <span class="status-tag" aria-hidden="true">
+            @if (p.pagoMesActual) {
+              <ion-icon name="checkmark-circle"></ion-icon>
+            } @else if (p.pagoAnioVisto) {
+              <ion-icon name="time-outline"></ion-icon>
+            } @else {
+              <ion-icon name="alert-circle-outline"></ion-icon>
+            }
+          </span>
+
+          <!-- avatar de iniciales -->
+          <span class="avatar" aria-hidden="true">
+            {{ p.nombre.charAt(0) }}{{ p.nombre.trim().split(/\s+/).slice(-1)[0].charAt(0) }}
+          </span>
+
+          <span class="cuerpo">
+            <span class="nombre">
+              {{ p.nombre }}
+            </span>
+            <span class="linea">
+              @if (p.pagoMesActual) {
+                <span class="estado-bule">Cuota de este mes pagada</span>
+              } @else if (p.pagoAnioVisto) {
+                <span class="ultimo">{{ textoUltimoPago(p) }}</span>
+              } @else {
+                <span class="sin-pago">Sin pagos este año</span>
+              }
+            </span>
+          </span>
+
+          <span class="abrir" aria-label="Ver meses">
+            <ion-icon name="chevron-forward-outline" aria-hidden="true"></ion-icon>
+          </span>
+        </button>
       }
-    </ion-list>
+    </div>
   }
 
   <!-- ================= Modal: meses del año del socio ================= -->
@@ -65,29 +98,49 @@
         </ion-header>
 
         <ion-content>
+          <!-- cabecera de socio -->
           <div class="cabecera-socio gm-animar">
-            <div class="datos">
-              <p>{{ formatearResumen(s) }}</p>
+            <span class="avatar" aria-hidden="true">
+              {{ s.nombre.charAt(0) }}{{ s.nombre.trim().split(/\s+/).slice(-1)[0].charAt(0) }}
+            </span>
+            <div class="cabecera-datos">
+              <h1 class="nombre">{{ s.nombre }}</h1>
+              <p class="resumen">{{ formatearResumen(s) }}</p>
             </div>
             @if (s.activo === false) {
-              <ion-chip color="medium">De baja</ion-chip>
+              <span class="chip chip-baja">De baja</span>
+            } @else {
+              <span class="chip" [class.chip-verde]="s.pagoMes" [class.chip-amarillo]="!s.pagoMes && s.pagosAnio > 0" [class.chip-rojo]="!s.pagoMes && s.pagosAnio === 0">
+                @if (s.pagoMes) {
+                  <ion-icon name="checkmark-circle" aria-hidden="true"></ion-icon>
+                  Al día
+                } @else if (s.pagosAnio > 0) {
+                  <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+                  Cobrar mes
+                } @else {
+                  <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+                  Sin pagos
+                }
+              </span>
             }
           </div>
 
+          <!-- grilla de meses -->
           <div class="grilla-meses">
             @for (mes of mesesDelAnio(); track mes.clave) {
               <button
                 type="button"
-                class="mes"
+                class="mes gm-animar"
                 [class.pagado]="estaPagado(mes.clave)"
                 [class.actual]="mes.actual"
                 [class.futuro]="mes.futuro"
                 [disabled]="mes.futuro"
                 (click)="togglePago(mes, !estaPagado(mes.clave))"
-                [attr.aria-label]="'Marcar pago de ' + mes.nombre"
+                [attr.aria-label]="'Marcar pago de ' + mes.nombre + (estaPagado(mes.clave) ? ' (quitar)' : '')"
+                [attr.aria-pressed]="estaPagado(mes.clave)"
               >
                 @if (estaPagado(mes.clave)) {
-                  <ion-icon class="check" name="checkmark-circle"></ion-icon>
+                  <ion-icon class="check" name="checkmark-circle" aria-hidden="true"></ion-icon>
                 }
                 <span class="nombre">{{ mes.corto }}</span>
                 <span class="anio-mini">{{ anio() }}</span>
@@ -95,29 +148,33 @@
             }
           </div>
 
-          <p class="ayuda">
+          <p class="ayuda" aria-live="polite">
             Tocá un mes para marcar el pago. Tocá de nuevo para quitarlo.
             @if (mesesPagadosAnio().length > 0) {
-              Pagó {{ mesesPagadosAnio().length }}
-              {{ mesesPagadosAnio().length === 1 ? 'mes' : 'meses' }} en {{ anio() }}:
-              {{ nombresMesesPagados() }}.
+              <span class="resumen-pagos">
+                Pagó {{ mesesPagadosAnio().length }}
+                {{ mesesPagadosAnio().length === 1 ? 'mes' : 'meses' }} en {{ anio() }}:
+                {{ nombresMesesPagados() }}.
+              </span>
             }
           </p>
 
-          <ion-card class="historial gm-animar">
-            <ion-card-content>
-              <h2>Historial completo</h2>
-              @if (s.mesesPagados.length === 0) {
-                <p>{{ s.nombre }} todavía no tiene meses pagados registrados.</p>
-              } @else {
-                <div class="lista-pagos">
-                  @for (clave of s.mesesPagados; track clave) {
-                    <span class="pago-pill">{{ nombreMes(clave) }} {{ clave.slice(0, 4) }}</span>
-                  }
-                </div>
-              }
-            </ion-card-content>
-          </ion-card>
+          <!-- historial -->
+          <div class="historial gm-animar">
+            <div class="historial-cabecera">
+              <ion-icon name="wallet-outline" aria-hidden="true"></ion-icon>
+              <h2 class="historial-titulo">Historial completo</h2>
+            </div>
+            @if (s.mesesPagados.length === 0) {
+              <p class="historial-empty">{{ s.nombre }} todavía no tiene meses pagados registrados.</p>
+            } @else {
+              <div class="lista-pagos" aria-label="Meses pagados">
+                @for (clave of s.mesesPagados; track clave) {
+                  <span class="pago-pill">{{ nombreMes(clave) }} {{ clave.slice(0, 4) }}</span>
+                }
+              </div>
+            }
+          </div>
         </ion-content>
       </ng-template>
     </ion-modal>

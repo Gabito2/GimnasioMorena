@@ -1,8 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import {
-  IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonIcon, IonCard,
-  IonCardContent, IonCardHeader, IonCardTitle, IonNote,
+  IonHeader, IonToolbar, IonTitle, IonContent, IonIcon,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
@@ -16,8 +15,7 @@ import { GymService } from '../services/gym.service';
   templateUrl: 'tab5.page.html',
   styleUrls: ['tab5.page.scss'],
   imports: [
-    IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonIcon, IonCard,
-    IonCardContent, IonCardHeader, IonCardTitle, IonNote,
+    IonHeader, IonToolbar, IonTitle, IonContent, IonIcon,
   ],
 })
 export class Tab5Page {

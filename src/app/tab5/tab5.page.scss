@@ -1,69 +1,183 @@
 :host {
   /* ============================================================
-     Copia de seguridad
+     Copia de seguridad (operaciones simples)
      ============================================================ */
 
-  ion-card-title {
-    display: flex;
-    align-items: center;
-    gap: 11px;
-    font-size: 15.5px;
+  .grid-operaciones {
+    --gap: 12px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--gap);
+    padding: 0 16px 120px;
+  }
 
-    /* Anillo por box-shadow: la insignia queda en 34x34 exactos */
-    ion-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 34px;
-      height: 34px;
-      flex-shrink: 0;
-      border-radius: 11px;
-      background: var(--gm-grad-oro-suave);
-      box-shadow: inset 0 0 0 1px var(--gm-acento-borde);
-      color: var(--ion-color-primary);
-      font-size: 18px;
+  @media (min-width: 600px) {
+    .grid-operaciones {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .estado {
+      grid-column: 1 / -1;
     }
   }
 
-  ion-card-content {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    line-height: 1.6;
-
-    p {
-      margin: 0;
-    }
-
-    ion-button {
-      margin: 0;
-    }
+  /* Bloque genérico */
+  .bloque {
+    border-radius: var(--gm-radio-lg);
+    border: 1px solid var(--gm-card-border);
+    background: var(--gm-grad-card);
+    padding: 14px;
+    overflow: hidden;
   }
 
-  .resumen {
+  .estado {
+    border-color: var(--gm-acento-borde);
+  }
+
+  .estado-cabecera,
+  .accion-cabecera {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 12px 14px;
-    border-radius: var(--gm-radio);
-    background: var(--gm-grad-oro-suave);
-    border: 1px solid var(--gm-acento-borde);
-    font-size: 14.5px;
-    color: var(--gm-texto);
+    margin-bottom: 10px;
+  }
 
-    strong {
-      font-weight: 800;
-      color: var(--ion-color-primary);
-    }
+  .estado-cabecera {
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--gm-card-border);
+  }
+
+  ion-icon.estado-cabecera-icono,
+  ion-icon.accion-cabecera-icono {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: 11px;
+    background: var(--gm-grad-oro-suave);
+    box-shadow: inset 0 0 0 1px var(--gm-acento-borde);
+    color: var(--ion-color-primary);
+    font-size: 18px;
+  }
+
+  .estado-titulo,
+  .accion-titulo {
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--gm-texto-suave);
+  }
+
+  .accion-cabecera {
+    padding-bottom: 8px;
+  }
+
+  .estado-valor {
+    font-size: 38px;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: var(--ion-color-primary);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .estado-label {
+    margin-top: 4px;
+    font-size: 12.5px;
+    color: var(--gm-texto-tenue);
+  }
+
+  .estado-nota,
+  .accion-desc,
+  .accion-nota {
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--gm-texto-suave);
+  }
+
+  .accion-desc {
+    margin-bottom: 10px;
+  }
+
+  .accion-nota {
+    margin-top: 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
 
     ion-icon {
-      font-size: 20px;
-      color: var(--ion-color-primary);
+      flex-shrink: 0;
+      font-size: 15px;
+      color: var(--ion-color-warning);
+      margin-top: 1px;
+    }
+
+    &.peligro ion-icon {
+      color: var(--ion-color-danger);
     }
   }
 
-  // Input de archivo invisible: lo dispara el botón vía click programático,
-  // así que no necesita tapar ningún elemento (antes tapaba la nota, no el botón).
+  .btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 14px 16px;
+    border-radius: var(--gm-radio);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    text-transform: none;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--gm-texto);
+    cursor: pointer;
+    transition:
+      transform var(--gm-trans),
+      background var(--gm-trans),
+      border-color var(--gm-trans),
+      box-shadow var(--gm-trans);
+    -webkit-tap-highlight-color: transparent;
+    appearance: none;
+
+    ion-icon {
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+
+    &:active:not([disabled]) {
+      transform: scale(0.985);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--gm-acento-borde);
+      outline-offset: 2px;
+    }
+
+    &.primario {
+      background: var(--gm-grad-oro);
+      color: var(--gm-texto-invertido);
+      box-shadow: var(--gm-sombra-oro);
+
+      &:hover:not([disabled]) {
+        background: var(--gm-oro-1);
+      }
+
+      &[disabled] {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--gm-texto-tenue);
+        box-shadow: none;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  /* input de archivo invisible, disparado por el botón de arriba */
   .input-archivo {
     position: absolute;
     top: 0;
@@ -72,22 +186,5 @@
     height: 1px;
     opacity: 0;
     pointer-events: none;
-  }
-
-  ion-note {
-    display: flex;
-    align-items: flex-start;
-    gap: 7px;
-    margin-top: 2px;
-    font-size: 12.5px;
-    font-weight: 500;
-    line-height: 1.5;
-
-    ion-icon {
-      flex-shrink: 0;
-      margin-top: 1px;
-      font-size: 16px;
-      color: var(--ion-color-warning);
-    }
   }
 }

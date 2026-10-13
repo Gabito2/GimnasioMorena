@@ -5,59 +5,62 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>
-        <ion-icon name="document-text-outline"></ion-icon>
-        Datos guardados
-      </ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <p>
-        Los datos se guardan automáticamente en este dispositivo (localStorage).
+  <div class="grid-operaciones">
+    <!-- Resumen rápido -->
+    <div class="bloque estado gm-animar">
+      <div class="estado-cabecera">
+        <ion-icon name="people-outline" aria-hidden="true"></ion-icon>
+        <span class="estado-titulo">Datos guardados</span>
+      </div>
+      <div class="estado-valor">{{ totalSocios() }}</div>
+      <div class="estado-label">socios en este dispositivo</div>
+      <p class="estado-nota">
+        Se guardan automáticamente en este dispositivo.
         Hacé copias periódicas para no perder la información.
       </p>
-      <div class="resumen">
-        <ion-icon name="people-outline"></ion-icon>
-        <span><strong>{{ totalSocios() }}</strong> socios guardados</span>
+    </div>
+
+    <!-- Exportar -->
+    <div class="bloque accion gm-animar">
+      <div class="accion-cabecera">
+        <ion-icon name="download-outline" aria-hidden="true"></ion-icon>
+        <span class="accion-titulo">Exportar</span>
       </div>
-    </ion-card-content>
-  </ion-card>
-
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>
-        <ion-icon name="save-outline"></ion-icon>
-        Exportar
-      </ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <p>Descargá todos los socios en un archivo JSON que podés guardar o pasar a otro dispositivo.</p>
-      <ion-button expand="block" (click)="exportar()">
-        <ion-icon slot="start" name="download-outline"></ion-icon>
-        Exportar datos (JSON)
-      </ion-button>
-    </ion-card-content>
-  </ion-card>
-
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>
-        <ion-icon name="cloud-upload-outline"></ion-icon>
-        Importar
-      </ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <p>
-        Cargá un archivo JSON exportado desde esta u otra instalación.
-        <strong>Reemplaza todos los datos actuales.</strong>
+      <p class="accion-desc">
+        Descargá todos los socios y pagos en un archivo JSON para guardar o pasar a otro dispositivo.
       </p>
+      <button
+        type="button"
+        class="btn primario"
+        [disabled]="totalSocios() === 0"
+        (click)="exportar()"
+      >
+        <ion-icon name="download-outline" aria-hidden="true"></ion-icon>
+        <span>Exportar datos (JSON)</span>
+      </button>
+      <p class="accion-nota">
+        El archivo se guarda en tu teléfono o computadora.
+      </p>
+    </div>
 
-      <ion-button expand="block" [disabled]="importando()" (click)="archivoInput.click()">
-        <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
-        {{ importando() ? 'Importando…' : 'Importar archivo JSON' }}
-      </ion-button>
-      <!-- input real de archivo: lo dispara el botón de arriba -->
+    <!-- Importar -->
+    <div class="bloque accion gm-animar">
+      <div class="accion-cabecera">
+        <ion-icon name="cloud-upload-outline" aria-hidden="true"></ion-icon>
+        <span class="accion-titulo">Importar</span>
+      </div>
+      <p class="accion-desc">
+        Cargá un archivo JSON exportado desde esta u otra instalación.
+      </p>
+      <button
+        type="button"
+        class="btn primario"
+        [disabled]="importando()"
+        (click)="archivoInput.click()"
+      >
+        <ion-icon name="cloud-upload-outline" aria-hidden="true"></ion-icon>
+        <span>{{ importando() ? 'Importando…' : 'Importar archivo JSON' }}</span>
+      </button>
       <input
         #archivoInput
         type="file"
@@ -65,11 +68,10 @@
         class="input-archivo"
         (change)="importar($event)"
       />
-
-      <ion-note color="medium">
-        <ion-icon name="warning-outline"></ion-icon>
+      <p class="accion-nota peligro">
+        <ion-icon name="warning-outline" aria-hidden="true"></ion-icon>
         Al importar, el listado actual se sobrescribe con el contenido del archivo.
-      </ion-note>
-    </ion-card-content>
-  </ion-card>
+      </p>
+    </div>
+  </div>
 </ion-content>

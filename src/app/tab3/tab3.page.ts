@@ -34,7 +34,7 @@ export class Tab3Page {
   readonly hoyISO = GymService.hoyISO();
 
   /** Montos frecuentes para carga con un toque. */
-  readonly montosRapidos = [20000, 23000, 25000, 30000] as const;
+  readonly montosRapidos = [25000, 30000, 35000, 40000] as const;
   readonly montoSeleccionado = signal<number | null>(null);
 
   /** Primera vencimiento estimado: ingreso + 30 días. */
@@ -49,7 +49,7 @@ export class Tab3Page {
     nombre: ['', [Validators.required, Validators.minLength(2)]],
     telefono: ['', [Validators.pattern(/^[0-9+\-\s()]{6,20}$/)]],
     fechaIngreso: [GymService.hoyISO(), Validators.required],
-    montoCuota: [23000, [Validators.required, Validators.min(0)]],
+    montoCuota: [25000, [Validators.required, Validators.min(0)]],
   });
 
   constructor() {

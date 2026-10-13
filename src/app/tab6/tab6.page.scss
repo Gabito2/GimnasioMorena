@@ -1,7 +1,7 @@
 /* Sin envoltorio `:host`: el contenido del ion-modal se portaliza fuera del
    componente, y Angular scopea estas reglas por atributo (_ngcontent). */
 
-/* ---------- Navegación de año (cabecera del modal) ---------- */
+/* ====== Navegación de año (cabecera del modal) ====== */
 ion-toolbar .anio {
   min-width: 56px;
   padding: 0 2px;
@@ -11,15 +11,18 @@ ion-toolbar .anio {
   font-variant-numeric: tabular-nums;
   text-align: center;
   color: var(--gm-oro-1);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* ---------- Buscador ---------- */
+/* ====== Buscador ====== */
 ion-searchbar {
   padding-bottom: 0;
 }
 
-/* Las filas son tarjetas sueltas: la lista principal pierde la superficie
-   agrupada que global.scss aplica a las listas inset. */
+ion-content > ion-list,
 ion-content > ion-list[inset] {
   margin: 0;
   padding: 0;
@@ -30,98 +33,281 @@ ion-content > ion-list[inset] {
   overflow: visible;
 }
 
-/* ---------- Selector de socio (fila tarjeta) ---------- */
-ion-item.fila-pago {
-  --background: var(--gm-grad-card);
-  --border-radius: var(--gm-radio-lg);
-  --padding-start: 14px;
-  --inner-padding-end: 12px;
-  --min-height: 70px;
-  margin: 10px 16px;
+/* ====== Grid de tarjetas de socio ====== */
+.grid-socios {
+  --grid-gap: 12px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--grid-gap);
+  padding: 4px 16px 100px;
+}
+
+@media (min-width: 580px) {
+  .grid-socios {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.tarjeta-socio {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  text-align: left;
+  color: var(--gm-texto);
+  background: var(--gm-grad-card);
   border-radius: var(--gm-radio-lg);
   border: 1px solid var(--gm-card-border);
   box-shadow: var(--gm-sombra-1);
+  padding: 14px 12px 14px 14px;
   overflow: hidden;
-  transition: transform var(--gm-trans), border-color var(--gm-trans);
+  transition:
+    transform var(--gm-trans),
+    border-color var(--gm-trans),
+    box-shadow var(--gm-trans),
+    background var(--gm-trans);
+  -webkit-tap-highlight-color: transparent;
+  appearance: none;
 
   &:active {
-    transform: scale(0.99);
+    transform: scale(0.992);
+    border-color: var(--gm-card-border-2);
   }
 
-  /* el icono de estado pasa a ser una insignia */
-  ion-icon[slot='start'] {
+  &:focus-visible {
+    outline: 2px solid var(--gm-acento-borde);
+    outline-offset: 2px;
+  }
+
+  /* Badge de estado: arriba a la izquierda, zona libre junto al avatar */
+  .status-tag {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--gm-card-border);
+    font-size: 16px;
+
+    .estado-verde & {
+      background: var(--gm-tinte-verde);
+      border-color: rgba(74, 222, 128, 0.32);
+      color: var(--ion-color-success);
+      box-shadow: 0 0 12px -2px rgba(74, 222, 128, 0.55);
+    }
+
+    .estado-amarillo & {
+      background: var(--gm-tinte-naranja);
+      border-color: rgba(251, 146, 60, 0.32);
+      color: var(--ion-color-warning);
+      box-shadow: 0 0 12px -2px rgba(251, 146, 60, 0.55);
+    }
+
+    .estado-rojo & {
+      background: var(--gm-tinte-rojo);
+      border-color: rgba(248, 113, 113, 0.32);
+      color: var(--ion-color-danger);
+      box-shadow: 0 0 12px -2px rgba(248, 113, 113, 0.55);
+    }
+  }
+
+  /* Avatar de iniciales dorado */
+  .avatar {
+    flex: 0 0 auto;
+    width: 52px;
+    height: 52px;
+    border-radius: var(--gm-radio);
+    background: var(--gm-grad-oro-suave);
+    box-shadow: inset 0 0 0 1px var(--gm-acento-borde), var(--gm-glow-oro);
+    color: var(--ion-color-primary);
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: 0.01em;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 38px;
-    height: 38px;
-    margin-inline-end: 12px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.05);
-    font-size: 20px;
+    font-family: var(--ion-font-family);
   }
 
-  /* Ionic convierte el `color` en la clase .ion-color-success, no en atributo */
-  ion-icon.ion-color-success {
-    background: var(--gm-tinte-verde);
-    box-shadow: 0 0 18px -5px rgba(74, 222, 128, 0.6);
+  .cuerpo {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    padding-left: 14px;
   }
 
-  h2 {
+  .nombre {
+    font-size: 16.5px;
+    font-weight: 700;
+    letter-spacing: -0.022em;
+    color: var(--gm-texto);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .linea {
+    font-size: 12.5px;
+    color: var(--gm-texto-suave);
+
+    .estado-bule {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--ion-color-success);
+      font-weight: 600;
+
+      &::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--ion-color-success);
+        box-shadow: 0 0 10px -1px rgba(74, 222, 128, 0.8);
+      }
+    }
+
+    .ultimo {
+      color: var(--gm-texto-suave);
+    }
+
+    .sin-pago {
+      color: var(--gm-texto-tenue);
+      font-style: italic;
+    }
+  }
+
+  .abrir {
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 15px;
-  }
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    margin-left: auto;
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--gm-texto-tenue);
+    font-size: 18px;
+    transition:
+      background var(--gm-trans),
+      color var(--gm-trans),
+      transform var(--gm-trans);
 
-  .chip-baja {
-    height: 20px;
-    margin: 0;
-    font-size: 10.5px;
+    &:hover {
+      background: rgba(255, 255, 255, 0.09);
+      color: var(--gm-texto-suave);
+    }
+
+    &:active {
+      transform: scale(0.9);
+    }
+
+    @media (max-width: 420px) {
+      /* en pantallas muy estrechas le damos un hueco extra para que no roce al badge */
+      margin-left: auto;
+      padding-left: 4px;
+    }
   }
 }
 
-/* ---------- Cabecera del socio dentro del modal ---------- */
+/* ====== Cabecera del socio dentro del modal ====== */
 .cabecera-socio {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 12px 16px 0;
+  gap: 12px;
+  padding: 16px 16px 14px;
+  border-bottom: 1px solid var(--gm-card-border);
+  margin-bottom: 14px;
+}
 
-  .datos {
-    flex: 1;
-    min-width: 0;
+.cabecera-socio .avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
+  font-size: 20px;
+}
 
-    h2 {
-      margin: 0;
-      font-size: 17px;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      color: var(--gm-texto);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+.cabecera-datos {
+  flex: 1;
+  min-width: 0;
+}
 
-    p {
-      margin: 3px 0 0;
-      font-size: 12.5px;
-      line-height: 1.45;
-      color: var(--gm-texto-suave);
-    }
-  }
+.cabecera-socio .nombre {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--gm-texto);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-  ion-chip {
-    flex-shrink: 0;
+.resumen {
+  margin: 3px 0 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--gm-texto-suave);
+  font-variant-numeric: tabular-nums;
+}
+
+.chip {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  white-space: nowrap;
+
+  ion-icon {
+    font-size: 12px;
   }
 }
 
-/* ---------- Grilla de meses ---------- */
+.chip.verde {
+  background: var(--gm-tinte-verde);
+  color: var(--ion-color-success);
+  border-color: rgba(74, 222, 128, 0.32);
+}
+
+.chip.amarillo {
+  background: var(--gm-tinte-naranja);
+  color: var(--ion-color-warning);
+  border-color: rgba(251, 146, 60, 0.32);
+}
+
+.chip.rojo {
+  background: var(--gm-tinte-rojo);
+  color: var(--ion-color-danger);
+  border-color: rgba(248, 113, 113, 0.32);
+}
+
+.chip.chip-baja {
+  background: var(--gm-tinte-neutro);
+  color: var(--gm-texto-tenue);
+  border-color: var(--gm-card-border-2);
+}
+
+/* ====== Grilla de meses ====== */
 .grilla-meses {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
-  padding: 14px 16px 4px;
+  padding: 6px 12px 4px;
 }
 
 .mes {
@@ -149,6 +335,11 @@ ion-item.fila-pago {
     transform: scale(0.96);
   }
 
+  &:focus-visible {
+    outline: 2px solid var(--gm-acento-borde);
+    outline-offset: 2px;
+  }
+
   .nombre {
     font-size: 15px;
     font-weight: 700;
@@ -163,8 +354,8 @@ ion-item.fila-pago {
 
   .check {
     position: absolute;
-    top: 6px;
-    right: 7px;
+    top: 5px;
+    right: 6px;
     font-size: 15px;
     color: var(--ion-color-success);
   }
@@ -207,44 +398,76 @@ ion-item.fila-pago {
   }
 }
 
+/* ====== Ayuda bajo la grilla ====== */
 .ayuda {
   margin: 12px 20px 4px;
   font-size: 12.5px;
   line-height: 1.55;
   color: var(--gm-texto-suave);
+
+  .resumen-pagos {
+    display: block;
+    margin-top: 3px;
+    color: var(--gm-texto);
+    font-weight: 600;
+  }
 }
 
-/* ---------- Historial completo ---------- */
+/* ====== Historial completo ====== */
 .historial {
-  h2 {
-    margin: 0 0 12px;
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--gm-texto);
-  }
+  margin: 16px 16px 12px;
+  border-radius: var(--gm-radio-lg);
+  border: 1px solid var(--gm-card-border);
+  background: rgba(255, 255, 255, 0.02);
+  overflow: hidden;
+}
 
-  p {
-    margin: 0;
-    font-size: 13.5px;
-  }
+.historial-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--gm-card-border);
+  background: rgba(255, 255, 255, 0.02);
 
-  .lista-pagos {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+  ion-icon {
+    font-size: 16px;
+    color: var(--ion-color-primary);
   }
+}
 
-  .pago-pill {
-    display: inline-flex;
-    align-items: center;
-    padding: 6px 13px;
-    border-radius: 999px;
-    background: var(--gm-tinte-verde);
-    border: 1px solid rgba(74, 222, 128, 0.28);
-    color: var(--ion-color-success);
-    font-size: 12.5px;
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-  }
+.historial-titulo {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--gm-texto);
+}
+
+.historial-empty {
+  margin: 0;
+  padding: 14px;
+  font-size: 12.5px;
+  color: var(--gm-texto-tenue);
+  text-align: center;
+}
+
+.lista-pagos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 14px;
+}
+
+.pago-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 13px;
+  border-radius: 999px;
+  background: var(--gm-tinte-verde);
+  border: 1px solid rgba(74, 222, 128, 0.28);
+  color: var(--ion-color-success);
+  font-size: 12.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }

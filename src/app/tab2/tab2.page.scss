@@ -2,7 +2,7 @@
    portaliza fuera del componente, y Angular scopea estas reglas por atributo
    (_ngcontent), por lo que siguen siendo propias de esta página. */
 
-/* ---------- Cabecera: búsqueda + filtros ---------- */
+/* ====== Filtros de cabecera ====== */
 ion-searchbar {
   padding-bottom: 0;
 }
@@ -12,8 +12,7 @@ ion-segment {
   max-width: 640px;
 }
 
-/* El listado son tarjetas sueltas: sólo la lista principal (hija directa del
-   contenido) pierde la superficie agrupada; las del modal la conservan. */
+ion-content > ion-list,
 ion-content > ion-list[inset] {
   margin: 0;
   padding: 0;
@@ -24,129 +23,481 @@ ion-content > ion-list[inset] {
   overflow: visible;
 }
 
-/* ---------- Fila de socio (tarjeta) ---------- */
-ion-item.fila {
-  --background: var(--gm-grad-card);
-  --border-radius: var(--gm-radio-lg);
-  --padding-start: 12px;
-  --padding-end: 4px;
-  --inner-padding-end: 2px;
-  --min-height: 78px;
-  margin: 10px 16px;
+/* ====== Grid de tarjetas de socio ====== */
+.grid-socios {
+  --grid-gap: 12px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--grid-gap);
+  padding: 4px 16px 100px;
+}
+
+@media (min-width: 580px) {
+  .grid-socios {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.tarjeta-socio {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  text-align: left;
+  color: var(--gm-texto);
+  background: var(--gm-grad-card);
   border-radius: var(--gm-radio-lg);
   border: 1px solid var(--gm-card-border);
   box-shadow: var(--gm-sombra-1);
+  padding: 14px 12px 14px 14px;
   overflow: hidden;
-  transition: transform var(--gm-trans), border-color var(--gm-trans), box-shadow var(--gm-trans);
+  transition:
+    transform var(--gm-trans),
+    border-color var(--gm-trans),
+    box-shadow var(--gm-trans),
+    background var(--gm-trans);
+  -webkit-tap-highlight-color: transparent;
+  appearance: none;
 
   &:active {
-    transform: scale(0.99);
+    transform: scale(0.992);
     border-color: var(--gm-card-border-2);
   }
 
-  /* barra de estado a la izquierda, con un halo de su propio color */
+  &:focus-visible {
+    outline: 2px solid var(--gm-acento-borde);
+    outline-offset: 2px;
+  }
+
+  /* Barra lateral de estado: crece desde la izquierda, con glow tenue */
   .barra {
-    width: 3px;
-    height: 46px;
-    margin-right: 10px;
-    flex-shrink: 0;
-    border-radius: 999px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    border-radius: var(--gm-radio-lg) 0 0 var(--gm-radio-lg);
   }
 
-  &.estado-verde .barra {
+  .barra-verde {
     background: var(--ion-color-success);
-    box-shadow: 0 0 14px -1px rgba(74, 222, 128, 0.6);
+    box-shadow: 0 0 16px -3px rgba(74, 222, 128, 0.7);
   }
 
-  &.estado-amarillo .barra {
+  .barra-amarillo {
     background: var(--ion-color-warning);
-    box-shadow: 0 0 14px -1px rgba(251, 146, 60, 0.6);
+    box-shadow: 0 0 16px -3px rgba(251, 146, 60, 0.7);
   }
 
-  &.estado-rojo .barra {
+  .barra-rojo {
     background: var(--ion-color-danger);
-    box-shadow: 0 0 14px -1px rgba(248, 113, 113, 0.6);
+    box-shadow: 0 0 16px -3px rgba(248, 113, 113, 0.7);
+  }
+
+  /* Avatar de iniciales dorado */
+  .avatar {
+    flex: 0 0 auto;
+    width: 52px;
+    height: 52px;
+    border-radius: var(--gm-radio);
+    background: var(--gm-grad-oro-suave);
+    box-shadow: inset 0 0 0 1px var(--gm-acento-borde), var(--gm-glow-oro);
+    color: var(--ion-color-primary);
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: 0.01em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--ion-font-family);
+  }
+
+  .avatar.grande {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    font-size: 22px;
+  }
+
+  .cuerpo {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    padding-left: 14px;
+  }
+
+  .nombre {
+    font-size: 16.5px;
+    font-weight: 700;
+    letter-spacing: -0.022em;
+    color: var(--gm-texto);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    .check-mes {
+      font-size: 17px;
+      color: var(--ion-color-success);
+      flex-shrink: 0;
+    }
+  }
+
+  .linea {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    font-size: 12.5px;
+    color: var(--gm-texto-suave);
+
+    ion-icon {
+      font-size: 13px;
+      opacity: 0.7;
+      flex-shrink: 0;
+      vertical-align: -1px;
+    }
+
+    .desconocido {
+      opacity: 0.5;
+      font-style: italic;
+    }
+
+    .sep {
+      opacity: 0.35;
+    }
+
+    .vence {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--gm-texto);
+      font-weight: 600;
+    }
+  }
+
+  .pie {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: auto;
+    padding-left: 14px;
+  }
+
+  /* Chip de estado, lightweight (ya no usa ion-chip nativo) */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+    white-space: nowrap;
+
+    ion-icon {
+      font-size: 12px;
+    }
+  }
+
+  .chip-chip-verde {
+    background: var(--gm-tinte-verde);
+    color: var(--ion-color-success);
+    border-color: rgba(74, 222, 128, 0.32);
+  }
+
+  .chip-chip-amarillo {
+    background: var(--gm-tinte-naranja);
+    color: var(--ion-color-warning);
+    border-color: rgba(251, 146, 60, 0.32);
+  }
+
+  .chip-chip-rojo {
+    background: var(--gm-tinte-rojo);
+    color: var(--ion-color-danger);
+    border-color: rgba(248, 113, 113, 0.32);
+  }
+
+  /* botón WhatsApp discreto */
+  .whatsapp {
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    border: 1px solid var(--gm-card-border-2);
+    background: rgba(37, 211, 102, 0.08);
+    color: var(--ion-color-success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    transition:
+      background var(--gm-trans),
+      border-color var(--gm-trans),
+      transform var(--gm-trans);
+
+    &:hover {
+      background: rgba(37, 211, 102, 0.16);
+    }
+
+    &:active {
+      transform: scale(0.94);
+      background: rgba(37, 211, 102, 0.18);
+    }
   }
 }
 
-/* ---------- Iniciales del socio ---------- */
-.inicial {
+/* ====== Ficha del socio (modal) ====== */
+.ficha {
+  padding: 4px 0 8px;
+}
+
+.ficha-cabecera {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 46px;
-  height: 46px;
-  border-radius: var(--gm-radio);
-  background: var(--gm-grad-oro-suave), var(--gm-card-bg-2);
-  border: 1px solid var(--gm-acento-borde);
-  color: var(--ion-color-primary);
-  font-weight: 700;
-
-  span {
-    font-size: 15px;
-    letter-spacing: 0.01em;
-  }
-}
-
-ion-label {
-  h2 {
-    font-size: 15.5px;
-  }
-
-  p {
-    font-size: 12.5px;
-  }
-}
-
-ion-chip {
-  margin: 7px 0 0;
-}
-
-/* Check verde junto al nombre si pagó el mes */
-.pagado-check {
-  color: var(--ion-color-success);
-  font-size: 16px;
-  vertical-align: -3px;
-  margin-left: 5px;
-}
-
-/* ---------- Ficha del socio (modal) ---------- */
-.ficha {
-  padding-bottom: 20px;
-}
-
-/* cabecera de perfil: fondo transparente + separador hairline */
-.ficha > ion-item {
-  --background: transparent;
-  --min-height: 82px;
-  margin-bottom: 16px;
+  gap: 14px;
+  padding: 0 16px 16px;
   border-bottom: 1px solid var(--gm-card-border);
+  margin-bottom: 14px;
 }
 
-.inicial.grande {
-  width: 58px;
-  height: 58px;
-  border-radius: 18px;
+.ficha-nombre {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--gm-texto);
+}
 
-  span {
-    font-size: 19px;
+.ficha-telefono {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  color: var(--gm-texto-suave);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  ion-icon {
+    font-size: 13px;
+    opacity: 0.7;
   }
+
+  .sin-dato {
+    opacity: 0.5;
+    font-style: italic;
+  }
+}
+
+.bloques {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 16px;
+}
+
+.bloque {
+  border-radius: var(--gm-radio);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--gm-card-border);
+  padding: 12px 14px;
+  transition: border-color var(--gm-trans);
+
+  &:hover {
+    border-color: var(--gm-card-border-2);
+  }
+}
+
+.bloque-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gm-texto-tenue);
+
+  ion-icon {
+    font-size: 14px;
+    color: var(--ion-color-primary);
+  }
+}
+
+.bloque-relleno {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bloque-valor {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--gm-texto);
+  font-variant-numeric: tabular-nums;
+
+  &.monto {
+    font-size: 20px;
+  }
+
+  .sufijo {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gm-texto-suave);
+    margin-left: 2px;
+  }
+}
+
+.bloque-label {
+  font-size: 11.5px;
+  color: var(--gm-texto-tenue);
+}
+
+/* ====== Editor (modal) ====== */
+.editor {
+  padding: 0 0 16px;
+}
+
+.editor-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--gm-card-border);
+  margin-bottom: 14px;
+}
+
+.editor-meta {
+  min-width: 0;
+}
+
+.editor-titulo {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--gm-texto);
+}
+
+.editor-sub {
+  margin: 3px 0 0;
+  font-size: 12.5px;
+  color: var(--gm-texto-suave);
+}
+
+/* Campos del editor: listado compacto sin superficie agrupada */
+ion-list {
+  padding: 0 4px;
+  margin: 0;
+}
+
+ion-item.campo {
+  --background: transparent;
+  --border-color: transparent;
+  --inner-border-width: 0;
+  --min-height: 52px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--gm-card-border);
+  padding-bottom: 14px;
 }
 
 .error-edicion {
-  display: block;
-  margin: 0 16px 8px;
+  margin: 0 16px 10px;
   font-size: 12.5px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
+/* ====== Acciones compartidas (ficha + editor) ====== */
 .acciones-detalle {
   display: flex;
   flex-direction: column;
-  gap: 9px;
-  padding: 10px 16px 20px;
+  gap: 10px;
+  padding: 6px 16px 20px;
+}
 
-  ion-button {
-    margin: 0;
+.accion {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 16px;
+  border-radius: var(--gm-radio);
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  text-transform: none;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--gm-texto);
+  cursor: pointer;
+  transition:
+    transform var(--gm-trans),
+    background var(--gm-trans),
+    border-color var(--gm-trans),
+    box-shadow var(--gm-trans);
+  -webkit-tap-highlight-color: transparent;
+  appearance: none;
+
+  ion-icon {
+    font-size: 17px;
+    flex-shrink: 0;
+  }
+
+  &:active {
+    transform: scale(0.985);
+  }
+
+  /* primaria: dorado */
+  &.primaria {
+    background: var(--gm-grad-oro);
+    color: var(--gm-texto-invertido);
+    box-shadow: var(--gm-sombra-oro);
+
+    &:hover {
+      background: var(--gm-oro-1);
+    }
+  }
+
+  /* outline neutro */
+  &.outline {
+    border-color: var(--gm-card-border-2);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--gm-texto-suave);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.07);
+    }
+  }
+
+  /* outline + semántico */
+  &.success {
+    border-color: rgba(74, 222, 128, 0.4);
+    color: var(--ion-color-success);
+    background: var(--gm-tinte-verde);
+
+    &:hover {
+      background: rgba(74, 222, 128, 0.16);
+    }
+  }
+
+  &.danger {
+    border-color: rgba(248, 113, 113, 0.4);
+    color: var(--ion-color-danger);
+    background: var(--gm-tinte-rojo);
+
+    &:hover {
+      background: rgba(248, 113, 113, 0.16);
+    }
   }
 }

@@ -2,8 +2,8 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar, IonSegment, IonSegmentButton, IonLabel,
-  IonList, IonItem, IonChip, IonIcon, IonButton, IonAvatar, IonAlert,
-  IonFab, IonFabButton, IonModal, IonButtons, IonInput, IonNote, IonText,
+  IonItem, IonList, IonIcon, IonButton, IonAlert,
+  IonFab, IonFabButton, IonModal, IonButtons, IonInput, IonText,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
@@ -21,8 +21,8 @@ type Filtro = 'todos' | 'al-dia' | 'por-vencer' | 'vencido';
   styleUrls: ['tab2.page.scss'],
   imports: [
     IonHeader, IonToolbar, IonTitle, IonContent, IonSearchbar, IonSegment, IonSegmentButton, IonLabel,
-    IonList, IonItem, IonChip, IonIcon, IonButton, IonAvatar, IonAlert,
-    IonFab, IonFabButton, IonModal, IonButtons, IonInput, IonNote, IonText,
+    IonItem, IonList, IonIcon, IonButton, IonAlert,
+    IonFab, IonFabButton, IonModal, IonButtons, IonInput, IonText,
   ],
 })
 export class Tab2Page {

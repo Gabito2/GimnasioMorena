@@ -2,12 +2,13 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonIcon,
-  IonCard, IonCardContent, IonList, IonItem, IonLabel, IonChip, IonSearchbar, IonModal,
+  IonSearchbar, IonModal,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
   walletOutline, calendarClearOutline, checkmarkCircle, chevronBackOutline,
   chevronForwardOutline, personOutline, searchOutline, closeCircleOutline,
+  timeOutline, alertCircleOutline,
 } from 'ionicons/icons';
 import { GymService, PersonaConEstado } from '../services/gym.service';
 
@@ -31,7 +32,7 @@ const NOMBRES_MESES = [
   styleUrls: ['tab6.page.scss'],
   imports: [
     IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonIcon,
-    IonCard, IonCardContent, IonList, IonItem, IonLabel, IonChip, IonSearchbar, IonModal,
+    IonSearchbar, IonModal,
   ],
 })
 export class Tab6Page {
@@ -102,6 +103,7 @@ export class Tab6Page {
     addIcons({
       walletOutline, calendarClearOutline, checkmarkCircle, chevronBackOutline,
       chevronForwardOutline, personOutline, searchOutline, closeCircleOutline,
+      timeOutline, alertCircleOutline,
     });
   }
 
