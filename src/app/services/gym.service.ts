@@ -230,8 +230,8 @@ export class GymService {
       this.pagos.update((lista) => [pago, ...lista]);
       this.guardarPagos();
     }
-    // Pagar el mes implica renovar la cuota (igual que "Cobrar y renovar").
-    this.renovarCuota(personaId);
+    // El vencimiento se deriva de los pagos: queda un mes después del último mes pago.
+    this.recalcularVencimiento(personaId);
   }
 
   /** Quita la marca de pago del mes corriente (desmarcar). */
@@ -239,6 +239,7 @@ export class GymService {
     const mes = GymService.hoyISO().slice(0, 7);
     this.pagos.update((lista) => lista.filter((x) => !(x.personaId === personaId && x.mes === mes)));
     this.guardarPagos();
+    this.recalcularVencimiento(personaId);
   }
 
   /** true si el socio tiene registrado el pago del mes dado (yyyy-MM). */
@@ -258,7 +259,10 @@ export class GymService {
       .sort((a, b) => b.mes.localeCompare(a.mes));
   }
 
-  /** Marca el pago del mes dado (yyyy-MM). No duplica y no toca el vencimiento. */
+  /**
+   * Marca el pago del mes dado (yyyy-MM). No duplica y ajusta el vencimiento
+   * al mes siguiente del último mes pago (nunca queda más de un mes adelante).
+   */
   registrarPago(personaId: string, mes: string): void {
     if (!/^\d{4}-\d{2}$/.test(mes) || this.estaPagado(personaId, mes)) return;
     const p = this.personas().find((x) => x.id === personaId);
@@ -271,12 +275,14 @@ export class GymService {
     };
     this.pagos.update((lista) => [pago, ...lista]);
     this.guardarPagos();
+    this.recalcularVencimiento(personaId);
   }
 
-  /** Quita el registro de pago del mes dado (yyyy-MM). */
+  /** Quita el registro de pago del mes dado (yyyy-MM) y recalcula el vencimiento. */
   quitarPago(personaId: string, mes: string): void {
     this.pagos.update((lista) => lista.filter((x) => !(x.personaId === personaId && x.mes === mes)));
     this.guardarPagos();
+    this.recalcularVencimiento(personaId);
   }
 
   /** true si el socio tiene algún pago registrado. */
@@ -310,6 +316,44 @@ export class GymService {
     if (!p) return;
     const base = GymService.diasRestantes(p.fechaVencimiento) > 0 ? p.fechaVencimiento : GymService.hoyISO();
     this.actualizar({ ...p, fechaVencimiento: GymService.sumarUnMes(base) });
+  }
+
+  /**
+   * Ajusta el vencimiento del socio a un mes después del último mes pago,
+   * conservando su día de vencimiento. Así la cuota nunca queda más de un mes
+   * adelante y los días mostrados coinciden con lo que el socio pagó.
+   * Sin pagos registrados se respeta la fecha cargada a mano.
+   */
+  private recalcularVencimiento(personaId: string): void {
+    const persona = this.personas().find((x) => x.id === personaId);
+    if (!persona) return;
+    const ultimoMes = this.pagos()
+      .filter((x) => x.personaId === personaId)
+      .map((x) => x.mes)
+      .sort()
+      .pop();
+    if (!ultimoMes) return;
+    const nuevo = GymService.mesSiguiente(ultimoMes, this.diaDeVencimiento(persona));
+    if (nuevo !== persona.fechaVencimiento) {
+      this.actualizar({ ...persona, fechaVencimiento: nuevo });
+    }
+  }
+
+  /** Día del mes del vencimiento (o del ingreso) para conservar la fecha de cobro. */
+  private diaDeVencimiento(p: Persona): number {
+    const match = /^\d{4}-\d{2}-(\d{2})/.exec(p.fechaVencimiento ?? '') ?? /^\d{4}-\d{2}-(\d{2})/.exec(p.fechaIngreso ?? '');
+    const dia = match ? Number(match[1]) : 1;
+    return dia >= 1 && dia <= 31 ? dia : 1;
+  }
+
+  /** Primer mes después de `mesClave` (yyyy-MM) con el día indicado, ajustado a meses cortos. */
+  private static mesSiguiente(mesClave: string, dia: number): string {
+    const anio = Number(mesClave.slice(0, 4));
+    const mes = Number(mesClave.slice(5, 7)); // 1..12
+    const d = new Date(anio, mes, 1); // mes 0-based → primer día del mes siguiente
+    const ultimoDia = new Date(anio, mes + 1, 0).getDate();
+    d.setDate(Math.min(dia, ultimoDia));
+    return GymService.aISO(d);
   }
 
   reemplazarTodo(personas: Persona[], pagos?: Pago[]): void {

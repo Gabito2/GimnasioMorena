@@ -43,12 +43,14 @@ export class Tab4Page {
     () => this.activos().filter((p) => p.diasRestantes >= 0 && p.diasRestantes <= 7).length,
   );
 
-  /** Ingresos del mes corriente según pagos registrados (solo socios activos). */
+  /** Ingresos del mes corriente: pagos registrados en el mes por socios activos. */
   readonly ingresosMes = computed(() => {
     const mesActual = GymService.hoyISO().slice(0, 7); // yyyy-MM
-    return this.activos()
-      .filter((p) => p.fechaVencimiento.slice(0, 7) >= mesActual) // cuota vigente = pagada
-      .reduce((sum, p) => sum + (p.montoCuota || 0), 0);
+    const activosIds = new Set(this.activos().map((p) => p.id));
+    return this.gym
+      .pagos()
+      .filter((pago) => pago.mes === mesActual && activosIds.has(pago.personaId))
+      .reduce((sum, pago) => sum + (pago.monto || 0), 0);
   });
 
   readonly moraEstimada = computed(

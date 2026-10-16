@@ -143,14 +143,15 @@ ion-content > ion-list[inset] {
     padding-left: 14px;
   }
 
+  /* El nombre se muestra completo: si no entra, baja de línea. */
   .nombre {
     font-size: 16.5px;
     font-weight: 700;
     letter-spacing: -0.022em;
     color: var(--gm-texto);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 
   .linea {

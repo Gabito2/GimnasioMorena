@@ -26,8 +26,20 @@ describe('GymService — pagos', () => {
     ]);
   });
 
-  it('marcarPagado registra un pago del mes corriente y renueva el vencimiento', () => {
+  it('marcarPagado registra un pago del mes corriente y ajusta el vencimiento', () => {
     const mes = GymService.hoyISO().slice(0, 7);
+    const [y, m] = mes.split('-').map(Number);
+    // Vencimiento fijo el día 15 del mes corriente (test independiente de la fecha).
+    service.reemplazarTodo([
+      {
+        id: 's1',
+        nombre: 'Juan Pérez',
+        telefono: '351 555 1234',
+        fechaIngreso: '2026-08-01',
+        montoCuota: 20000,
+        fechaVencimiento: GymService.aISO(new Date(y, m - 1, 15)),
+      },
+    ]);
     expect(service.pagoDelMes('s1')).toBe(false);
 
     service.marcarPagado('s1');
@@ -36,9 +48,8 @@ describe('GymService — pagos', () => {
     expect(service.pagosDe('s1').length).toBe(1);
     expect(service.pagosDe('s1')[0].mes).toBe(mes);
     expect(service.pagosDe('s1')[0].monto).toBe(20000);
-    // Al pagar se renueva la cuota un mes desde el vencimiento vigente.
-    const juan = service.personas().find((p) => p.id === 's1');
-    expect(juan?.fechaVencimiento).toBe(GymService.sumarUnMes(vencFuturo));
+    // El vencimiento pasa al mismo día del mes siguiente al pago.
+    expect(service.personas()[0].fechaVencimiento).toBe(GymService.aISO(new Date(y, m, 15)));
   });
 
   it('marcarPagado no duplica el pago si el mes ya está registrado', () => {
@@ -69,12 +80,49 @@ describe('GymService — pagos', () => {
     expect(service.pagoDelMes('s1')).toBe(true);
   });
 
-  it('registrarPago marca un mes específico sin tocar el vencimiento', () => {
-    const antes = service.personas().find((p) => p.id === 's1')?.fechaVencimiento;
+  it('registrarPago ajusta el vencimiento al mes siguiente del último mes pago', () => {
+    service.reemplazarTodo([
+      {
+        id: 's1',
+        nombre: 'Juan Pérez',
+        telefono: '',
+        fechaIngreso: '2026-01-15',
+        montoCuota: 20000,
+        fechaVencimiento: '2026-10-15',
+      },
+    ]);
+
     service.registrarPago('s1', '2026-03');
     expect(service.estaPagado('s1', '2026-03')).toBe(true);
-    const despues = service.personas().find((p) => p.id === 's1')?.fechaVencimiento;
-    expect(despues).toBe(antes);
+    expect(service.personas()[0].fechaVencimiento).toBe('2026-04-15');
+
+    // Un pago más nuevo corre el vencimiento otro mes (nunca más de un mes adelante).
+    service.registrarPago('s1', '2026-05');
+    expect(service.personas()[0].fechaVencimiento).toBe('2026-06-15');
+
+    // Al quitar el último pago, vuelve al mes siguiente del pago anterior.
+    service.quitarPago('s1', '2026-05');
+    expect(service.personas()[0].fechaVencimiento).toBe('2026-04-15');
+  });
+
+  it('corrige un vencimiento muy adelantado al marcar el pago del mes', () => {
+    const mes = GymService.hoyISO().slice(0, 7);
+    const [y, m] = mes.split('-').map(Number);
+    // Vencimiento ~3 meses adelante (el caso de "faltan 91 días").
+    service.reemplazarTodo([
+      {
+        id: 's1',
+        nombre: 'Juan Pérez',
+        telefono: '',
+        fechaIngreso: '2026-01-15',
+        montoCuota: 20000,
+        fechaVencimiento: GymService.aISO(new Date(y, m + 2, 15)),
+      },
+    ]);
+
+    service.registrarPago('s1', mes);
+
+    expect(service.personas()[0].fechaVencimiento).toBe(GymService.aISO(new Date(y, m, 15)));
   });
 
   it('registrarPago ignora meses con formato inválido o ya pagados', () => {

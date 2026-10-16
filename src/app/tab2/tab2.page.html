@@ -73,24 +73,24 @@
                 <span>Vence {{ formatearFecha(p.fechaVencimiento) }}</span>
               </span>
             </span>
-          </span>
 
-          <!-- chip de estado + acción WhatsApp -->
-          <span class="pie">
-            <span class="chip" [class]="'chip-' + claseEstado[p.estado]" (click)="cambiarFiltroDesdeChip(p.estado); $event.stopPropagation()">
-              <ion-icon [name]="iconoEstado[p.estado]" aria-hidden="true"></ion-icon>
-              {{ p.estadoTexto }}
+            <!-- chip de estado + acción WhatsApp -->
+            <span class="pie">
+              <span class="chip" [class]="'chip-' + claseEstado[p.estado]" (click)="cambiarFiltroDesdeChip(p.estado); $event.stopPropagation()">
+                <ion-icon [name]="iconoEstado[p.estado]" aria-hidden="true"></ion-icon>
+                {{ p.estadoTexto }}
+              </span>
+              @if (p.telefono) {
+                <button
+                  class="whatsapp"
+                  type="button"
+                  (click)="enviarRecordatorio(p); $event.stopPropagation()"
+                  aria-label="Enviar recordatorio por WhatsApp"
+                >
+                  <ion-icon name="logo-whatsapp" aria-hidden="true"></ion-icon>
+                </button>
+              }
             </span>
-            @if (p.telefono) {
-              <button
-                class="whatsapp"
-                type="button"
-                (click)="enviarRecordatorio(p); $event.stopPropagation()"
-                aria-label="Enviar recordatorio por WhatsApp"
-              >
-                <ion-icon name="logo-whatsapp" aria-hidden="true"></ion-icon>
-              </button>
-            }
           </span>
         </button>
       }
@@ -179,7 +179,7 @@
                     @if (s.mesesPagados.length === 0) {
                       <span class="sin-dato">Todavía no tiene pagos registrados</span>
                     } @else {
-                      <span class="bloque-valor">{{ s.mesesPagados.slice(0, 6).join(' · ') }}</span>
+                      <span class="bloque-valor">{{ ultimosPagos(s) }}</span>
                       <span class="bloque-label">Mes/año</span>
                     }
                   </div>
@@ -198,6 +198,10 @@
                     <span>Mandar mensaje por WhatsApp</span>
                   </button>
                 }
+                <button type="button" class="accion outline" (click)="pedirBaja(s)">
+                  <ion-icon name="person-remove-outline" aria-hidden="true"></ion-icon>
+                  <span>Dar de baja</span>
+                </button>
                 <button type="button" class="accion outline danger" (click)="pedirEliminar(s)">
                   <ion-icon name="trash-outline" aria-hidden="true"></ion-icon>
                   <span>Eliminar socio</span>
@@ -292,13 +296,13 @@
     </ion-modal>
   }
 
-  @if (alertaEliminar(); as cfg) {
+  @if (alerta(); as cfg) {
     <ion-alert
       [isOpen]="true"
       [header]="cfg.header"
       [message]="cfg.message"
       [buttons]="cfg.buttons"
-      (didDismiss)="alertaEliminar.set(null)"
+      (didDismiss)="alerta.set(null)"
     ></ion-alert>
   }
 </ion-content>

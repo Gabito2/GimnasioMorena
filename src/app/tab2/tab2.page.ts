@@ -10,10 +10,13 @@ import {
   personOutline, callOutline, trashOutline, searchOutline, alertCircleOutline,
   checkmarkCircleOutline, timeOutline, add, logoWhatsapp, checkmarkDoneOutline,
   createOutline, walletOutline, calendarOutline, calendarClearOutline, cashOutline,
+  personRemoveOutline,
 } from 'ionicons/icons';
 import { GymService, Persona, PersonaConEstado, EstadoCuota } from '../services/gym.service';
 
 type Filtro = 'todos' | 'al-dia' | 'por-vencer' | 'vencido';
+
+const MESES_CORTOS = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
 @Component({
   selector: 'app-tab2',
@@ -48,7 +51,8 @@ export class Tab2Page {
       .sort((a, b) => a.diasRestantes - b.diasRestantes);
   });
 
-  readonly alertaEliminar = signal<{ header: string; message: string; buttons: unknown[] } | null>(null);
+  /** Configuración de la alerta de confirmación abierta (eliminar, baja o cobrar). */
+  readonly alerta = signal<{ header: string; message: string; buttons: unknown[] } | null>(null);
 
   /** Socio seleccionado: abre el modal de detalle (null = cerrado). */
   readonly seleccionado = signal<PersonaConEstado | null>(null);
@@ -81,7 +85,7 @@ export class Tab2Page {
       personOutline, callOutline, trashOutline, searchOutline,
       alertCircleOutline, checkmarkCircleOutline, timeOutline, add,
       logoWhatsapp, checkmarkDoneOutline,      createOutline, walletOutline,
-      calendarOutline, calendarClearOutline, cashOutline,
+      calendarOutline, calendarClearOutline, cashOutline, personRemoveOutline,
     });
   }
 
@@ -100,6 +104,18 @@ export class Tab2Page {
 
   formatearMonto(n: number): string {
     return '$' + (n || 0).toLocaleString('es-AR');
+  }
+
+  /** "Sep 2026 · Ago 2026" con los últimos meses pagados (más nuevos primero). */
+  ultimosPagos(p: PersonaConEstado): string {
+    return p.mesesPagados.slice(0, 6).map((mes) => this.formatearMes(mes)).join(' · ');
+  }
+
+  /** Convierte una clave yyyy-MM en "Mes aaaa" (ej. '2026-09' → 'Sep 2026'). */
+  private formatearMes(clave: string): string {
+    const [anio, mes] = clave.split('-');
+    const nombre = MESES_CORTOS[Number(mes) - 1];
+    return nombre ? `${nombre} ${anio}` : clave;
   }
 
   cambiarFiltroDesdeChip(estado: EstadoCuota): void {
@@ -188,11 +204,33 @@ export class Tab2Page {
     this.gym.enviarWhatsApp(p.telefono, GymService.mensajeRecordatorio(p.nombre, p.fechaVencimiento, p.montoCuota));
   }
 
+  /**
+   * Baja lógica: el socio sale del listado pero conserva su historial y puede
+   * reactivarse desde Estadísticas.
+   */
+  pedirBaja(p: PersonaConEstado): void {
+    this.alerta.set({
+      header: 'Dar de baja',
+      message: `¿Dar de baja a ${p.nombre}? Sale del listado, pero se conserva su historial de pagos y podés reactivarlo desde Estadísticas.`,
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Dar de baja',
+          role: 'destructive',
+          handler: () => {
+            this.gym.darBaja(p.id);
+            this.cerrarDetalle();
+          },
+        },
+      ],
+    });
+  }
+
   /** Elimina al socio y todo su historial, con confirmación. */
   pedirEliminar(p: PersonaConEstado): void {
-    this.alertaEliminar.set({
+    this.alerta.set({
       header: 'Eliminar socio',
-      message: `¿Eliminar a ${p.nombre} y todo su historial de pagos? Esta acción no se puede deshacer.`,
+      message: `¿Eliminar a ${p.nombre} y todo su historial de pagos? Esta acción no se puede deshacer. Si solo dejó el gimnasio, usá "Dar de baja".`,
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {

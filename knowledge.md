@@ -24,7 +24,7 @@ npx cap open android                    # open in Android Studio
 - **Entry:** `src/main.ts` (bootstrapApplication). Routes in `src/app/app.routes.ts` → lazy-loaded `tabs/tabs.routes.ts`.
 - **Tabs** (bottom tab bar, `src/app/tabs/tabs.page.html`):
   - `tab1` — Inicio (home/dashboard)
-  - `tab2` — Socios (member list; tapping a row opens a detail modal: edit data, dar de baja, WhatsApp, cobrar/renovar, eliminar)
+  - `tab2` — Socios (card list; tapping a card opens a detail modal: edit data, dar de baja, WhatsApp, eliminar). "Últimos pagos" shows the months by name (e.g. `Sep 2026`).
   - `tab3` — Registrar (add member): reactive form (`NonNullableFormBuilder`) with four **floating-label** fields (nombre, WhatsApp, fecha de ingreso, cuota), quick-amount chips, a live summary (alumno / cuota / ingreso / primer vencimiento) and a sticky action bar. Each field gives state feedback: gold label + ring while focused, red label + ring + message when `ion-touched.ion-invalid`, and a **green tick in the end slot when valid and blurred** — while typing, that same slot shows a clear (✕) button instead (`limpiarNombre` / `limpiarTelefono`). First due date is derived (ingreso + 30 días) and never typed by hand.
   - `tab4` — Stats
   - `tab5` — Datos (import/export JSON)
@@ -32,7 +32,7 @@ npx cap open android                    # open in Android Studio
 - **All state lives in `src/app/services/gym.service.ts`** (`GymService`, `providedIn: 'root'`):
   - Angular **signals** (`personas`, `pagos`, `hayDatos` computed) — components consume via signals, not RxJS subjects.
   - CRUD: `agregar`, `actualizar`, `eliminar`, `renovarCuota`, `reemplazarTodo`.
-  - **Pagos:** `marcarPagado` (current month + renews cuota), `desmarcarPagado`, `registrarPago(id, 'yyyy-MM')` (specific month, does NOT touch vencimiento), `quitarPago`, `estaPagado`, `pagoDelMes`, `pagosDe`, `tienePagos`, `pagoEnAnio`. Each `Pago` = `{ id, personaId, mes (yyyy-MM), fecha, monto }`, stored under key `gym-morena-pagos`. Deleting a socio cleans its pagos; export/import (v2) carries pagos and drops orphans.
+  - **Pagos:** `marcarPagado` (current month), `desmarcarPagado`, `registrarPago(id, 'yyyy-MM')`, `quitarPago`, `estaPagado`, `pagoDelMes`, `pagosDe`, `tienePagos`, `pagoEnAnio`. Any payment add/remove **recalculates the vencimiento**: it becomes one month after the latest paid month, keeping the due day (never more than one month ahead); with no pagos the manually entered date is respected. Each `Pago` = `{ id, personaId, mes (yyyy-MM), fecha, monto }`, stored under key `gym-morena-pagos`. Deleting a socio cleans its pagos; export/import (v2) carries pagos and drops orphans.
   - **Baja lógica:** `Persona.activo` (optional, defaults true; normalized on load/import/replace). `darBaja(id)` / `reactivar(id)`. Baja keeps data + payment history; hard delete (`eliminar`) wipes both. `estadoDe` returns `pagoMes`, `mesesPagados` (desc) and `pagosAnio`. Inactive socios are excluded from tab1 stats, tab2 list and tab4 metrics; tab4 has a "Socios de baja" section with a Reactivar button, and tab6's socio picker still lists them (with a "De baja" chip).
   - **WhatsApp:** `mensajeRecordatorio` / `mensajeGracias` (standard Spanish templates), `normalizarTelefono` (Argentina: `0`/10-digit → `54…`), `urlWhatsApp` (wa.me link), `enviarWhatsApp` (opens wa.me; toast warning if no phone). All static helpers are static on `GymService`.
   - Persistence: `localStorage` keys `gym-morena-personas` and `gym-morena-pagos`.
